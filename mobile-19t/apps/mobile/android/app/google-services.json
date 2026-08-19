@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "502236887100",
+    "project_id": "t-mobile-9b640",
+    "storage_bucket": "t-mobile-9b640.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:502236887100:android:d25e1a6df863a88b77eb39",
+        "android_client_info": {
+          "package_name": "vn.u19t.nineteen_tech_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCC4ZSF7MSNNbgKgQE1s02VLTwp0mLT0Io"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

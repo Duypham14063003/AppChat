@@ -1,0 +1,11 @@
+export { UserPointWallet } from './user-point-wallet.entity.js';
+export { PointRule } from './point-rule.entity.js';
+export { PointTransaction } from './point-transaction.entity.js';
+export { RewardItem } from './reward-item.entity.js';
+export { RewardRedemption } from './reward-redemption.entity.js';
+export { PointPeriodHistory } from './point-period-history.entity.js';
+export { OdooTaskTagConfig } from './odoo-task-tag-config.entity.js';
+export { JobTitleMultiplier } from './job-title-multiplier.entity.js';
+export { OdooTaskRewardLog } from './odoo-task-reward-log.entity.js';
+export { InternalRole } from './internal-role.entity.js';
+export { JobTitleMapping } from './job-title-mapping.entity.js';

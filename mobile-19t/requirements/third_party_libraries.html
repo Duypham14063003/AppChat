@@ -1,0 +1,481 @@
+
+<style>
+  .lib-wrap { padding: 12px 0; }
+  .section { margin-bottom: 28px; }
+  .section-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0 0 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--color-border-tertiary);
+  }
+  .platform-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+  .badge-flutter { background: var(--color-background-info); color: var(--color-text-info); }
+  .badge-nestjs  { background: var(--color-background-success); color: var(--color-text-success); }
+  .badge-infra   { background: var(--color-background-warning); color: var(--color-text-warning); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    text-align: left;
+    font-weight: 500;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    padding: 6px 10px;
+    background: var(--color-background-secondary);
+    border-bottom: 1px solid var(--color-border-tertiary);
+  }
+  td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--color-border-tertiary);
+    vertical-align: top;
+    color: var(--color-text-primary);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--color-background-secondary); }
+  .pkg { font-family: var(--font-mono); font-size: 12px; font-weight: 500; color: var(--color-text-info); }
+  .note { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+  .tag {
+    display: inline-block;
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 8px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .tag-core    { background: var(--color-background-danger);  color: var(--color-text-danger); }
+  .tag-ui      { background: var(--color-background-info);    color: var(--color-text-info); }
+  .tag-perf    { background: var(--color-background-warning); color: var(--color-text-warning); }
+  .tag-opt     { background: var(--color-background-secondary); color: var(--color-text-secondary); border: 1px solid var(--color-border-secondary); }
+</style>
+
+<div class="lib-wrap">
+
+<!-- ───── FLUTTER ───── -->
+<div class="section">
+  <div class="section-title">Flutter (pub.dev)</div>
+  <span class="platform-badge badge-flutter">📱 Flutter / Dart</span>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:26%">Package</th>
+        <th style="width:30%">Dùng cho</th>
+        <th style="width:28%">Ghi chú</th>
+        <th style="width:16%">Ưu tiên</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="4" style="font-weight:500;font-size:12px;color:var(--color-text-secondary);background:var(--color-background-secondary);">💬 Chat core</td></tr>
+      <tr>
+        <td><span class="pkg">flutter_chat_ui</span></td>
+        <td>Chat bubble UI — backend-agnostic, cross-platform</td>
+        <td class="note">Flyer Chat, Apache 2.0, actively maintained</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">web_socket_channel</span></td>
+        <td>WebSocket client cho real-time</td>
+        <td class="note">Official Dart team package</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">drift</span></td>
+        <td>Local SQLite DB — cache messages offline</td>
+        <td class="note">Type-safe, reactive, code-gen</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">flutter_sound</span></td>
+        <td>Record + playback voice message</td>
+        <td class="note">Hỗ trợ waveform data</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">just_audio</span></td>
+        <td>Play audio (voice msg, call ringtone)</td>
+        <td class="note">Nhẹ hơn flutter_sound cho playback</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">emoji_picker_flutter</span></td>
+        <td>Emoji picker panel như Telegram</td>
+        <td class="note">Có recently used, search</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">swipe_to</span></td>
+        <td>Swipe để reply message</td>
+        <td class="note">Gesture wrapper cho chat bubble</td>
+        <td><span class="tag tag-ui">UI</span></td>
+      </tr>
+
+      <tr><td colspan="4" style="font-weight:500;font-size:12px;color:var(--color-text-secondary);background:var(--color-background-secondary);">📁 File & Media</td></tr>
+      <tr>
+        <td><span class="pkg">file_picker</span></td>
+        <td>Chọn file đính kèm mọi loại</td>
+        <td class="note">Cross-platform, hỗ trợ Desktop</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">image_picker</span></td>
+        <td>Chọn ảnh / video từ gallery hoặc camera</td>
+        <td class="note">Official Flutter package</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">cached_network_image</span></td>
+        <td>Cache & hiện ảnh từ URL (Bunny.net)</td>
+        <td class="note">Bắt buộc cho performance</td>
+        <td><span class="tag tag-perf">Perf</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">photo_view</span></td>
+        <td>Xem ảnh full-screen pinch-to-zoom</td>
+        <td class="note">Dùng khi tap ảnh trong chat</td>
+        <td><span class="tag tag-ui">UI</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">video_player</span></td>
+        <td>Preview video attachment trong chat</td>
+        <td class="note">Official Flutter package</td>
+        <td><span class="tag tag-ui">UI</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">dio</span></td>
+        <td>HTTP client — upload file lên Bunny.net</td>
+        <td class="note">Hỗ trợ multipart, progress stream</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+
+      <tr><td colspan="4" style="font-weight:500;font-size:12px;color:var(--color-text-secondary);background:var(--color-background-secondary);">📞 Call</td></tr>
+      <tr>
+        <td><span class="pkg">agora_rtc_engine</span></td>
+        <td>Voice & Video call qua Agora</td>
+        <td class="note">v6.5.3 — iOS/Android/macOS/Windows/Web</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">flutter_callkit_incoming</span></td>
+        <td>Incoming call UI khi app ở background</td>
+        <td class="note">Native call screen iOS & Android</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">permission_handler</span></td>
+        <td>Xin quyền mic, camera, storage</td>
+        <td class="note">Cần cho call và voice msg</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+
+      <tr><td colspan="4" style="font-weight:500;font-size:12px;color:var(--color-text-secondary);background:var(--color-background-secondary);">🔔 Notification</td></tr>
+      <tr>
+        <td><span class="pkg">firebase_messaging</span></td>
+        <td>FCM push notification</td>
+        <td class="note">Background + foreground</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">flutter_local_notifications</span></td>
+        <td>Hiện notification khi app foreground</td>
+        <td class="note">FCM không tự hiện khi app mở</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+
+      <tr><td colspan="4" style="font-weight:500;font-size:12px;color:var(--color-text-secondary);background:var(--color-background-secondary);">🧠 State & Architecture</td></tr>
+      <tr>
+        <td><span class="pkg">flutter_riverpod</span></td>
+        <td>State management toàn app</td>
+        <td class="note">+ riverpod_annotation cho code-gen</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">go_router</span></td>
+        <td>Navigation / deep link</td>
+        <td class="note">Official Flutter team, hỗ trợ web URL</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">flutter_secure_storage</span></td>
+        <td>Lưu JWT token an toàn</td>
+        <td class="note">Keychain iOS, Keystore Android</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">shared_preferences</span></td>
+        <td>Lưu settings nhẹ (theme, language...)</td>
+        <td class="note">Không dùng cho sensitive data</td>
+        <td><span class="tag tag-opt">Optional</span></td>
+      </tr>
+
+      <tr><td colspan="4" style="font-weight:500;font-size:12px;color:var(--color-text-secondary);background:var(--color-background-secondary);">🎨 UI / UX</td></tr>
+      <tr>
+        <td><span class="pkg">shimmer</span></td>
+        <td>Skeleton loading effect</td>
+        <td class="note">Dùng khi load tin nhắn / profile</td>
+        <td><span class="tag tag-ui">UI</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">lottie</span></td>
+        <td>Animation JSON (sticker, reaction)</td>
+        <td class="note">Telegram dùng Lottie cho sticker</td>
+        <td><span class="tag tag-ui">UI</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">flutter_animate</span></td>
+        <td>Micro-animation cho bubble, UI elements</td>
+        <td class="note">Chain animations dễ dàng</td>
+        <td><span class="tag tag-ui">UI</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">timeago</span></td>
+        <td>"2 phút trước", "Hôm qua" cho timestamp</td>
+        <td class="note">Có tiếng Việt locale</td>
+        <td><span class="tag tag-ui">UI</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">intl</span></td>
+        <td>Format ngày giờ, i18n</td>
+        <td class="note">Official Dart package</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">fl_chart</span></td>
+        <td>Chart cho HR stats, project progress</td>
+        <td class="note">Line, bar, pie chart đẹp</td>
+        <td><span class="tag tag-opt">Optional</span></td>
+      </tr>
+
+      <tr><td colspan="4" style="font-weight:500;font-size:12px;color:var(--color-text-secondary);background:var(--color-background-secondary);">⚙️ Utilities</td></tr>
+      <tr>
+        <td><span class="pkg">geolocator</span></td>
+        <td>GPS cho checkin/checkout geofencing</td>
+        <td class="note">+ geocoding để resolve địa chỉ</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">connectivity_plus</span></td>
+        <td>Detect online/offline để queue messages</td>
+        <td class="note">Trigger sync khi có mạng lại</td>
+        <td><span class="tag tag-perf">Perf</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">uuid</span></td>
+        <td>Generate UUID cho message ID phía client</td>
+        <td class="note">Cần cho Optimistic UI</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">package_info_plus</span></td>
+        <td>Đọc app version cho profile / update check</td>
+        <td class="note">—</td>
+        <td><span class="tag tag-opt">Optional</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ───── NESTJS / NODE ───── -->
+<div class="section">
+  <div class="section-title">NestJS / Node.js (npm)</div>
+  <span class="platform-badge badge-nestjs">🟢 NestJS / Node.js</span>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:28%">Package</th>
+        <th style="width:32%">Dùng cho</th>
+        <th style="width:26%">Ghi chú</th>
+        <th style="width:14%">Ưu tiên</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="4" style="font-weight:500;font-size:12px;color:var(--color-text-secondary);background:var(--color-background-secondary);">🏗 NestJS Core</td></tr>
+      <tr>
+        <td><span class="pkg">@nestjs/websockets</span></td>
+        <td>WebSocket Gateway decorator</td>
+        <td class="note">Built-in NestJS module</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">@nestjs/platform-socket.io</span></td>
+        <td>Socket.io adapter cho WS</td>
+        <td class="note">Hoặc dùng ws cho nhẹ hơn</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">@nestjs/jwt</span></td>
+        <td>JWT sign/verify</td>
+        <td class="note">Access + Refresh token</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">@nestjs/passport</span></td>
+        <td>Auth strategy (JWT strategy)</td>
+        <td class="note">Kết hợp passport-jwt</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">@nestjs/config</span></td>
+        <td>Quản lý env variables</td>
+        <td class="note">Validate với class-validator</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">@nestjs/throttler</span></td>
+        <td>Rate limiting API</td>
+        <td class="note">Chống spam message</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">class-validator</span></td>
+        <td>Validate DTO</td>
+        <td class="note">+ class-transformer</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+
+      <tr><td colspan="4" style="font-weight:500;font-size:12px;color:var(--color-text-secondary);background:var(--color-background-secondary);">🗄 Database & ORM</td></tr>
+      <tr>
+        <td><span class="pkg">@nestjs/typeorm</span></td>
+        <td>ORM cho PostgreSQL</td>
+        <td class="note">+ typeorm. Hoặc dùng Prisma</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">pg</span></td>
+        <td>PostgreSQL driver</td>
+        <td class="note">Node.js native driver</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+
+      <tr><td colspan="4" style="font-weight:500;font-size:12px;color:var(--color-text-secondary);background:var(--color-background-secondary);">⚡ Queue & Cache</td></tr>
+      <tr>
+        <td><span class="pkg">@nestjs/bullmq</span></td>
+        <td>Job queue wrapper cho NestJS</td>
+        <td class="note">+ bullmq (core lib)</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">ioredis</span></td>
+        <td>Redis client — Pub/Sub + BullMQ</td>
+        <td class="note">Hỗ trợ cluster, sentinel</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">@nestjs/cache-manager</span></td>
+        <td>Cache layer (Redis backend)</td>
+        <td class="note">Cache Odoo API responses</td>
+        <td><span class="tag tag-perf">Perf</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">@bull-board/api</span></td>
+        <td>Dashboard monitor BullMQ queues</td>
+        <td class="note">UI để xem job status</td>
+        <td><span class="tag tag-opt">Optional</span></td>
+      </tr>
+
+      <tr><td colspan="4" style="font-weight:500;font-size:12px;color:var(--color-text-secondary);background:var(--color-background-secondary);">📤 Storage & Notification</td></tr>
+      <tr>
+        <td><span class="pkg">axios</span></td>
+        <td>HTTP client — gọi Odoo API, Bunny.net</td>
+        <td class="note">Hoặc dùng built-in NestJS HttpModule</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">firebase-admin</span></td>
+        <td>Gửi FCM push notification từ server</td>
+        <td class="note">Service account credentials</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">multer</span></td>
+        <td>Xử lý multipart upload trước khi đẩy lên Bunny</td>
+        <td class="note">+ @types/multer</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+
+      <tr><td colspan="4" style="font-weight:500;font-size:12px;color:var(--color-text-secondary);background:var(--color-background-secondary);">🔍 Logging & Monitoring</td></tr>
+      <tr>
+        <td><span class="pkg">winston</span></td>
+        <td>Structured logging</td>
+        <td class="note">+ nest-winston adapter</td>
+        <td><span class="tag tag-opt">Optional</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">@nestjs/swagger</span></td>
+        <td>Auto-gen API docs</td>
+        <td class="note">Swagger UI cho team dùng</td>
+        <td><span class="tag tag-opt">Optional</span></td>
+      </tr>
+      <tr>
+        <td><span class="pkg">helmet</span></td>
+        <td>HTTP security headers</td>
+        <td class="note">Bắt buộc cho production</td>
+        <td><span class="tag tag-core">Core</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ───── INFRA ───── -->
+<div class="section">
+  <div class="section-title">Infrastructure (Docker / DevOps)</div>
+  <span class="platform-badge badge-infra">🏗 Infra</span>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:28%">Service</th>
+        <th style="width:44%">Vai trò</th>
+        <th>Ghi chú</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="pkg">PostgreSQL 16</span></td>
+        <td>Main DB — messages, HR, users</td>
+        <td class="note">+ TimescaleDB extension nếu cần time-series</td>
+      </tr>
+      <tr>
+        <td><span class="pkg">Redis 7</span></td>
+        <td>Pub/Sub fanout + BullMQ jobs + cache</td>
+        <td class="note">Một instance, 3 công dụng</td>
+      </tr>
+      <tr>
+        <td><span class="pkg">Bunny.net CDN</span></td>
+        <td>Storage: ảnh, file, voice, video</td>
+        <td class="note">Giá rẻ hơn S3, CDN toàn cầu</td>
+      </tr>
+      <tr>
+        <td><span class="pkg">Agora.io</span></td>
+        <td>Voice + Video call infrastructure</td>
+        <td class="note">Token generate từ NestJS backend</td>
+      </tr>
+      <tr>
+        <td><span class="pkg">Firebase FCM</span></td>
+        <td>Push notification iOS + Android</td>
+        <td class="note">Free tier đủ dùng cho &lt;50 người</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Legend -->
+<div style="display:flex;gap:10px;flex-wrap:wrap;padding-top:4px;">
+  <span style="font-size:12px;color:var(--color-text-secondary);font-weight:500;">Chú thích:</span>
+  <span class="tag tag-core">Core</span><span style="font-size:12px;color:var(--color-text-secondary)">Bắt buộc</span>
+  <span class="tag tag-ui">UI</span><span style="font-size:12px;color:var(--color-text-secondary)">Cần cho UX tốt</span>
+  <span class="tag tag-perf">Perf</span><span style="font-size:12px;color:var(--color-text-secondary)">Ảnh hưởng performance</span>
+  <span class="tag tag-opt">Optional</span><span style="font-size:12px;color:var(--color-text-secondary)">Nice-to-have</span>
+</div>
+
+</div>

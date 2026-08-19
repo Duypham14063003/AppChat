@@ -1,0 +1,498 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --k:#0A0A0A;--k2:#111116;--k3:#18181F;--k4:#1F1F28;--k5:#272732;
+  --g:#C9A84C;--g2:#E2C06A;--g3:#A8843A;
+  --gb:rgba(201,168,76,.10);--gbd:rgba(201,168,76,.22);--gbd2:rgba(201,168,76,.38);
+  --tx:#F2EDD8;--tx2:#9E9880;--tx3:#5A5648;
+  --gr:#2ECC71;--rd:#E74C3C;--bl:#3B8BDB;--am:#E2A030;--tl:#1D9E75;--pu:#7F77DD;
+  --br:rgba(255,255,255,.05);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;background:transparent;color:var(--tx)}
+.root{padding:10px 0;display:flex;flex-direction:column;gap:0}
+
+/* category tabs */
+.cats{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.cat{padding:6px 13px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--gbd);color:var(--tx2);transition:all .15s;letter-spacing:.02em;user-select:none;display:flex;align-items:center;gap:5px}
+.cat.on{background:var(--g);color:var(--k);border-color:var(--g)}
+.cat:hover:not(.on){border-color:var(--g2);color:var(--tx)}
+.cat-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+/* sections */
+.sections{display:flex;flex-direction:column;gap:14px}
+.section{display:none}
+.section.on{display:flex;flex-direction:column;gap:10px}
+
+/* item card */
+.item{background:var(--k2);border:1px solid var(--gbd);border-radius:12px;padding:14px 16px;cursor:pointer;transition:border-color .15s}
+.item:hover{border-color:var(--g2)}
+.item.open{border-color:var(--g)}
+.item-head{display:flex;align-items:center;gap:10px}
+.item-pri{padding:2px 8px;border-radius:5px;font-size:9px;font-weight:800;letter-spacing:.05em;flex-shrink:0}
+.p-must{background:rgba(231,76,60,.12);color:var(--rd);border:1px solid rgba(231,76,60,.2)}
+.p-should{background:rgba(226,160,48,.1);color:var(--am);border:1px solid rgba(226,160,48,.2)}
+.p-nice{background:rgba(46,204,113,.08);color:var(--gr);border:1px solid rgba(46,204,113,.18)}
+.p-decide{background:rgba(127,119,221,.1);color:var(--pu);border:1px solid rgba(127,119,221,.2)}
+.item-title{font-size:13px;font-weight:700;color:var(--tx);flex:1}
+.item-status{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--gbd);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;transition:all .15s}
+.item-status.done{background:var(--g);border-color:var(--g)}
+.item-chevron{width:6px;height:6px;border-right:1.5px solid var(--tx3);border-bottom:1.5px solid var(--tx3);transform:rotate(45deg);transition:transform .15s;flex-shrink:0}
+.item.open .item-chevron{transform:rotate(-135deg)}
+.item-body{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--k4)}
+.item.open .item-body{display:block}
+.item-desc{font-size:12px;color:var(--tx2);line-height:1.6;margin-bottom:10px}
+.item-questions{display:flex;flex-direction:column;gap:6px}
+.iq{display:flex;gap:8px;align-items:flex-start;padding:7px 10px;background:var(--k3);border-radius:8px;border-left:2px solid var(--gbd2)}
+.iq-q{font-size:11px;color:var(--tx2);line-height:1.5;flex:1}
+.iq-q b{color:var(--g2);font-weight:700}
+.code-note{font-family:monospace;font-size:10px;color:var(--g2);background:var(--k4);border-radius:6px;padding:7px 10px;margin-top:8px;line-height:1.6}
+
+/* progress bar */
+.progress-wrap{background:var(--k2);border:1px solid var(--gbd);border-radius:12px;padding:14px 16px;margin-bottom:4px}
+.prog-title{font-size:12px;font-weight:700;color:var(--g2);margin-bottom:10px}
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+.prog-lbl{font-size:11px;color:var(--tx2);width:120px;flex-shrink:0}
+.prog-bg{flex:1;height:5px;background:var(--k5);border-radius:3px}
+.prog-fill{height:5px;border-radius:3px;transition:width .3s}
+.prog-pct{font-size:10px;font-weight:700;width:30px;text-align:right;flex-shrink:0}
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px}
+.leg{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--tx2)}
+.leg-dot{width:8px;height:8px;border-radius:2px}
+</style>
+
+<div class="root">
+
+<!-- PROGRESS OVERVIEW -->
+<div class="progress-wrap">
+  <div class="prog-title">Mức độ đã brainstorm trong conversation này</div>
+  <div class="prog-row"><span class="prog-lbl">Chat & Real-time</span><div class="prog-bg"><div class="prog-fill" style="width:92%;background:var(--gr)"></div></div><span class="prog-pct" style="color:var(--gr)">92%</span></div>
+  <div class="prog-row"><span class="prog-lbl">Call (Agora)</span><div class="prog-bg"><div class="prog-fill" style="width:88%;background:var(--gr)"></div></div><span class="prog-pct" style="color:var(--gr)">88%</span></div>
+  <div class="prog-row"><span class="prog-lbl">DB & Search</span><div class="prog-bg"><div class="prog-fill" style="width:85%;background:var(--gr)"></div></div><span class="prog-pct" style="color:var(--gr)">85%</span></div>
+  <div class="prog-row"><span class="prog-lbl">HR Module</span><div class="prog-bg"><div class="prog-fill" style="width:60%;background:var(--am)"></div></div><span class="prog-pct" style="color:var(--am)">60%</span></div>
+  <div class="prog-row"><span class="prog-lbl">UI / Mockup</span><div class="prog-bg"><div class="prog-fill" style="width:80%;background:var(--gr)"></div></div><span class="prog-pct" style="color:var(--gr)">80%</span></div>
+  <div class="prog-row"><span class="prog-lbl">Security & Auth</span><div class="prog-bg"><div class="prog-fill" style="width:20%;background:var(--rd)"></div></div><span class="prog-pct" style="color:var(--rd)">20%</span></div>
+  <div class="prog-row"><span class="prog-lbl">DevOps / Infra</span><div class="prog-bg"><div class="prog-fill" style="width:10%;background:var(--rd)"></div></div><span class="prog-pct" style="color:var(--rd)">10%</span></div>
+  <div class="prog-row"><span class="prog-lbl">Offline & Sync</span><div class="prog-bg"><div class="prog-fill" style="width:30%;background:var(--rd)"></div></div><span class="prog-pct" style="color:var(--rd)">30%</span></div>
+  <div class="prog-row"><span class="prog-lbl">Testing strategy</span><div class="prog-bg"><div class="prog-fill" style="width:5%;background:var(--rd)"></div></div><span class="prog-pct" style="color:var(--rd)">5%</span></div>
+  <div class="prog-row"><span class="prog-lbl">Release & Update</span><div class="prog-bg"><div class="prog-fill" style="width:0%;background:var(--rd)"></div></div><span class="prog-pct" style="color:var(--rd)">0%</span></div>
+  <div class="legend">
+    <div class="leg"><div class="leg-dot" style="background:var(--gr)"></div>Đã brainstorm tốt</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--am)"></div>Cần đào sâu thêm</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--rd)"></div>Chưa đụng tới</div>
+  </div>
+</div>
+
+<!-- CATEGORY TABS -->
+<div class="cats">
+  <div class="cat on" onclick="showCat('security',this)"><div class="cat-dot" style="background:var(--rd)"></div>Security</div>
+  <div class="cat"    onclick="showCat('offline',this)"><div class="cat-dot" style="background:var(--rd)"></div>Offline & Sync</div>
+  <div class="cat"    onclick="showCat('devops',this)"><div class="cat-dot" style="background:var(--rd)"></div>DevOps</div>
+  <div class="cat"    onclick="showCat('hr',this)"><div class="cat-dot" style="background:var(--am)"></div>HR edge cases</div>
+  <div class="cat"    onclick="showCat('testing',this)"><div class="cat-dot" style="background:var(--rd)"></div>Testing</div>
+  <div class="cat"    onclick="showCat('release',this)"><div class="cat-dot" style="background:var(--rd)"></div>Release</div>
+  <div class="cat"    onclick="showCat('product',this)"><div class="cat-dot" style="background:var(--am)"></div>Product</div>
+</div>
+
+<div class="sections">
+
+<!-- SECURITY -->
+<div class="section on" id="sec-security">
+  <div class="item" onclick="tog(this)">
+    <div class="item-head">
+      <span class="item-pri p-must">MUST</span>
+      <span class="item-title">JWT strategy — access token + refresh token</span>
+      <div class="item-chevron"></div>
+    </div>
+    <div class="item-body">
+      <div class="item-desc">Chưa quyết định rõ lifetime và rotation strategy. Đây ảnh hưởng trực tiếp tới UX (bị logout bất ngờ) và security.</div>
+      <div class="item-questions">
+        <div class="iq"><div class="iq-q"><b>Access token</b> sống bao lâu? 15 phút (secure) hay 1 giờ (ít annoying hơn)?</div></div>
+        <div class="iq"><div class="iq-q"><b>Refresh token rotation:</b> mỗi lần dùng refresh token → issue token mới và invalidate token cũ. Nếu token cũ được dùng lại → detect theft → logout tất cả sessions.</div></div>
+        <div class="iq"><div class="iq-q"><b>Multi-device:</b> user login trên 3 thiết bị → mỗi device có refresh token riêng. Logout một device không ảnh hưởng device khác.</div></div>
+        <div class="iq"><div class="iq-q"><b>Token storage Flutter:</b> flutter_secure_storage (Keychain iOS / Keystore Android). Desktop: encrypted file. Web: httpOnly cookie thay vì localStorage.</div></div>
+      </div>
+      <div class="code-note">access_token_ttl:  15m (config)<br>refresh_token_ttl: 30d<br>Table: user_sessions (device_id, refresh_token_hash, last_used, expires_at)</div>
+    </div>
+  </div>
+
+  <div class="item" onclick="tog(this)">
+    <div class="item-head">
+      <span class="item-pri p-must">MUST</span>
+      <span class="item-title">Odoo service account — scope và rate limit</span>
+      <div class="item-chevron"></div>
+    </div>
+    <div class="item-body">
+      <div class="item-desc">Hiện tại plan dùng Odoo service account để gọi API. Cần thiết kế rõ ràng để không bị abuse.</div>
+      <div class="item-questions">
+        <div class="iq"><div class="iq-q"><b>Service account chỉ được phép làm gì?</b> Read-only HR data? Hay cũng write (checkin/checkout)? Principle of least privilege.</div></div>
+        <div class="iq"><div class="iq-q"><b>Cache Odoo responses:</b> user profile, payroll config, project list → cache Redis 5-15 phút. Không gọi Odoo mỗi request.</div></div>
+        <div class="iq"><div class="iq-q"><b>Odoo API rate limit?</b> Cần biết limit để thiết kế queue hoặc circuit breaker nếu Odoo bị chậm.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="item" onclick="tog(this)">
+    <div class="item-head">
+      <span class="item-pri p-must">MUST</span>
+      <span class="item-title">Message encryption — có cần E2E không?</span>
+      <div class="item-chevron"></div>
+    </div>
+    <div class="item-body">
+      <div class="item-desc">Đây là quyết định quan trọng ảnh hưởng toàn bộ architecture. Cần quyết định trước khi code DB schema.</div>
+      <div class="item-questions">
+        <div class="iq"><div class="iq-q"><b>Option A — Transport only (TLS):</b> Message lưu plaintext trong DB. Admin có thể đọc. Đơn giản, dễ implement search/backup. Phù hợp với internal tool.</div></div>
+        <div class="iq"><div class="iq-q"><b>Option B — E2E Encryption:</b> Message mã hóa trên client, server không đọc được. Signal Protocol hoặc tự implement. Rất phức tạp, search không hoạt động, backup khó. Overkill cho internal app.</div></div>
+        <div class="iq"><div class="iq-q"><b>Khuyến nghị cho use case này:</b> TLS + HTTPS + encrypted DB at rest là đủ. E2E thêm complexity không tương xứng cho internal company tool.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="item" onclick="tog(this)">
+    <div class="item-head">
+      <span class="item-pri p-must">MUST</span>
+      <span class="item-title">Rate limiting & anti-spam</span>
+      <div class="item-chevron"></div>
+    </div>
+    <div class="item-body">
+      <div class="item-desc">Internal app nhưng vẫn cần guard. Bot hoặc bug client có thể spam messages làm DB overload.</div>
+      <div class="item-questions">
+        <div class="iq"><div class="iq-q"><b>Message rate limit:</b> tối đa 30 messages/phút/user. Implement ở NestJS WebSocket gateway bằng @nestjs/throttler.</div></div>
+        <div class="iq"><div class="iq-q"><b>File upload rate limit:</b> tối đa 10 files/phút/user, max file size 50MB (config).</div></div>
+        <div class="iq"><div class="iq-q"><b>WebSocket reconnect flood:</b> exponential backoff ở Flutter client — 1s, 2s, 4s, 8s... max 60s. Không reconnect liên tục khi mất mạng.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="item" onclick="tog(this)">
+    <div class="item-head">
+      <span class="item-pri p-should">SHOULD</span>
+      <span class="item-title">Permission model — ai xem được gì?</span>
+      <div class="item-chevron"></div>
+    </div>
+    <div class="item-body">
+      <div class="item-desc">Chưa define rõ roles và permission trong app. Cần thiết kế trước khi code API.</div>
+      <div class="item-questions">
+        <div class="iq"><div class="iq-q"><b>Roles:</b> Admin / Manager / Employee — 3 level là đủ cho < 50 người.</div></div>
+        <div class="iq"><div class="iq-q"><b>HR data:</b> Employee chỉ xem data của mình. Manager xem team. Admin xem tất cả.</div></div>
+        <div class="iq"><div class="iq-q"><b>Conversation access:</b> User chỉ load messages của conversation mình là member. API phải enforce điều này — không chỉ hide ở UI.</div></div>
+        <div class="iq"><div class="iq-q"><b>Bot permissions:</b> Bot chỉ được post vào channels được chỉ định, không được DM user trừ khi được cho phép.</div></div>
+      </div>
+      <div class="code-note">Table: roles (id, name, permissions jsonb)<br>Table: user_roles (user_id, role_id, scope: 'global'|'team')</div>
+    </div>
+  </div>
+</div>
+
+<!-- OFFLINE & SYNC -->
+<div class="section" id="sec-offline">
+  <div class="item" onclick="tog(this)">
+    <div class="item-head">
+      <span class="item-pri p-must">MUST</span>
+      <span class="item-title">Conflict resolution — gửi tin khi offline</span>
+      <div class="item-chevron"></div>
+    </div>
+    <div class="item-body">
+      <div class="item-desc">User gõ và gửi tin khi không có mạng. App phải queue và retry khi có mạng. Cần define behavior rõ ràng.</div>
+      <div class="item-questions">
+        <div class="iq"><div class="iq-q"><b>Client-side queue:</b> Message được assign UUID ngay trên client → lưu vào Drift với status=pending → gửi lên server khi có mạng → server confirm với same UUID.</div></div>
+        <div class="iq"><div class="iq-q"><b>Duplicate prevention:</b> Server dùng UUID làm idempotency key. Message gửi lại 3 lần vẫn chỉ insert 1 lần.</div></div>
+        <div class="iq"><div class="iq-q"><b>Order đảm bảo:</b> Client_generated_at (local time) dùng để sort optimistic. Server_created_at (UTC) dùng để sort chính thức sau khi sync. Có thể có chênh lệch nhỏ — acceptable.</div></div>
+        <div class="iq"><div class="iq-q"><b>Failed permanently:</b> Sau 5 lần retry thất bại → đánh dấu "Gửi thất bại" + nút Retry. Không silent drop.</div></div>
+      </div>
+      <div class="code-note">enum MessageStatus { pending, sent, delivered, read, failed }<br>Drift: messages table thêm cột local_status, retry_count, client_id</div>
+    </div>
+  </div>
+
+  <div class="item" onclick="tog(this)">
+    <div class="item-head">
+      <span class="item-pri p-must">MUST</span>
+      <span class="item-title">Reconnect & missed messages sync</span>
+      <div class="item-chevron"></div>
+    </div>
+    <div class="item-body">
+      <div class="item-desc">App bị background 30 phút, có 20 messages mới. Khi foreground lại phải sync đúng, không miss.</div>
+      <div class="item-questions">
+        <div class="iq"><div class="iq-q"><b>Last seen timestamp:</b> Mỗi device lưu last_synced_at. Khi reconnect WebSocket → gửi last_synced_at → server trả về tất cả messages mới hơn.</div></div>
+        <div class="iq"><div class="iq-q"><b>FCM backup:</b> Nếu WebSocket miss event → FCM push là safety net. App foreground → merge FCM payload với WS stream.</div></div>
+        <div class="iq"><div class="iq-q"><b>Delta sync endpoint:</b> GET /sync?since=timestamp trả về messages, read receipts, reactions thay đổi. Gọi khi app foreground sau > 5 phút background.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="item" onclick="tog(this)">
+    <div class="item-head">
+      <span class="item-pri p-should">SHOULD</span>
+      <span class="item-title">HR checkin offline — GPS cache</span>
+      <div class="item-chevron"></div>
+    </div>
+    <div class="item-body">
+      <div class="item-desc">Nhân viên checkin ở vùng sóng yếu. App phải ghi nhận chính xác thời điểm checkin, không phải thời điểm có mạng.</div>
+      <div class="item-questions">
+        <div class="iq"><div class="iq-q"><b>Capture locally:</b> Khi bấm checkin → lưu ngay (timestamp, GPS coords, device_id) vào Drift. Status = pending_sync.</div></div>
+        <div class="iq"><div class="iq-q"><b>Sync khi có mạng:</b> Gửi lên server với original_timestamp. Server dùng original_timestamp, không phải received_at.</div></div>
+        <div class="iq"><div class="iq-q"><b>Anti-cheat:</b> Server validate GPS coordinates hợp lệ, timestamp không quá 24h cũ, không checkin 2 lần trong cùng ngày.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DEVOPS -->
+<div class="section" id="sec-devops">
+  <div class="item" onclick="tog(this)">
+    <div class="item-head">
+      <span class="item-pri p-must">MUST</span>
+      <span class="item-title">Môi trường — dev / staging / production</span>
+      <div class="item-chevron"></div>
+    </div>
+    <div class="item-body">
+      <div class="item-desc">Cần 3 environment riêng trước khi bắt đầu code. Không có staging → deploy thẳng lên production → nguy hiểm.</div>
+      <div class="item-questions">
+        <div class="iq"><div class="iq-q"><b>Dev:</b> Local machine. DB local, Redis local. Flutter app connect localhost.</div></div>
+        <div class="iq"><div class="iq-q"><b>Staging:</b> Server riêng (có thể VPS nhỏ). Dữ liệu test, không dữ liệu thật. Team test trước khi release.</div></div>
+        <div class="iq"><div class="iq-q"><b>Production:</b> Server chính. Backup tự động. Monitoring. Zero-downtime deploy.</div></div>
+        <div class="iq"><div class="iq-q"><b>Flutter flavor:</b> Mỗi environment là một flavor riêng — khác màu app icon, khác bundle ID, khác API URL. Không nhầm lẫn staging với production.</div></div>
+      </div>
+      <div class="code-note">Flutter flavors: dev | staging | prod<br>flutter run --flavor dev -t lib/main_dev.dart<br>flutter build apk --flavor prod -t lib/main_prod.dart</div>
+    </div>
+  </div>
+
+  <div class="item" onclick="tog(this)">
+    <div class="item-head">
+      <span class="item-pri p-must">MUST</span>
+      <span class="item-title">CI/CD pipeline</span>
+      <div class="item-chevron"></div>
+    </div>
+    <div class="item-body">
+      <div class="item-desc">Không có CI/CD → deploy tay → lỗi do human error → mất tin cậy với team.</div>
+      <div class="item-questions">
+        <div class="iq"><div class="iq-q"><b>Backend (NestJS):</b> GitHub Actions → test → build Docker image → push registry → deploy tới server (zero-downtime rolling update).</div></div>
+        <div class="iq"><div class="iq-q"><b>Flutter mobile (iOS/Android):</b> GitHub Actions + Fastlane → build → upload TestFlight (iOS) / Internal Track (Android) tự động.</div></div>
+        <div class="iq"><div class="iq-q"><b>Flutter desktop (Windows/macOS):</b> Build artifact, upload tới internal distribution server. User download từ đó hoặc auto-update.</div></div>
+        <div class="iq"><div class="iq-q"><b>DB migrations:</b> TypeORM migrations chạy tự động khi deploy. Không bao giờ sửa DB tay trên production.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="item" onclick="tog(this)">
+    <div class="item-head">
+      <span class="item-pri p-must">MUST</span>
+      <span class="item-title">Monitoring & alerting</span>
+      <div class="item-chevron"></div>
+    </div>
+    <div class="item-body">
+      <div class="item-desc">App internal nhưng vẫn cần biết khi có sự cố. Không monitor → biết server chết khi user báo cáo.</div>
+      <div class="item-questions">
+        <div class="iq"><div class="iq-q"><b>Uptime monitoring:</b> BetterUptime hoặc UptimeRobot (free). Ping /health endpoint mỗi 1 phút. Alert qua Telegram bot (ironic) hoặc email khi down.</div></div>
+        <div class="iq"><div class="iq-q"><b>Error tracking:</b> Sentry (free tier đủ dùng). NestJS backend + Flutter client đều integrate. Biết ngay khi có exception.</div></div>
+        <div class="iq"><div class="iq-q"><b>Performance monitoring:</b> Track p95 API latency. Alert khi > 500ms. Đơn giản nhất: log slow queries PostgreSQL (log_min_duration_statement = 200ms).</div></div>
+        <div class="iq"><div class="iq-q"><b>Business metrics:</b> Daily active users, message volume, call duration. Dùng để justify cost và plan scale.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="item" onclick="tog(this)">
+    <div class="item-head">
+      <span class="item-pri p-should">SHOULD</span>
+      <span class="item-title">Backup strategy</span>
+      <div class="item-chevron"></div>
+    </div>
+    <div class="item-body">
+      <div class="item-questions">
+        <div class="iq"><div class="iq-q"><b>PostgreSQL:</b> pg_dump tự động mỗi đêm → upload S3/Bunny.net. Giữ 30 ngày. Test restore mỗi tháng.</div></div>
+        <div class="iq"><div class="iq-q"><b>Redis:</b> AOF persistence. Redis data là cache/queue — mất được (sẽ tự rebuild), nhưng vẫn nên persist.</div></div>
+        <div class="iq"><div class="iq-q"><b>Bunny.net files:</b> Files attachment đã lưu trên CDN. Bunny.net tự redundant. Nhưng nên enable geo-replication.</div></div>
+        <div class="iq"><div class="iq-q"><b>RTO/RPO:</b> Mục tiêu là restore trong 2 giờ, mất tối đa 24h data. Xác định ngay để chọn backup frequency.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HR EDGE CASES -->
+<div class="section" id="sec-hr">
+  <div class="item" onclick="tog(this)">
+    <div class="item-head">
+      <span class="item-pri p-must">MUST</span>
+      <span class="item-title">Timezone & ngày lễ</span>
+      <div class="item-chevron"></div>
+    </div>
+    <div class="item-body">
+      <div class="item-questions">
+        <div class="iq"><div class="iq-q"><b>Timezone:</b> Tất cả timestamp lưu UTC trong DB. Flutter convert sang timezone local của user khi hiển thị. Không bao giờ lưu local time.</div></div>
+        <div class="iq"><div class="iq-q"><b>Ngày lễ Việt Nam:</b> Cần table ngày lễ — ảnh hưởng tới tính công chuẩn, OT rate. Cập nhật hàng năm. Admin có thể add custom holidays.</div></div>
+        <div class="iq"><div class="iq-q"><b>Kỳ lương cross-month:</b> Nếu kỳ lương 20/3 → 19/4, logic tính công phải handle đúng, không bị off-by-one error ở ngày đầu/cuối kỳ.</div></div>
+      </div>
+      <div class="code-note">Table: holidays (date, name, type: national|company|custom)<br>All timestamps: timestamptz (UTC) — không dùng timestamp without tz</div>
+    </div>
+  </div>
+
+  <div class="item" onclick="tog(this)">
+    <div class="item-head">
+      <span class="item-pri p-must">MUST</span>
+      <span class="item-title">Approvals workflow — ai duyệt đơn?</span>
+      <div class="item-chevron"></div>
+    </div>
+    <div class="item-body">
+      <div class="item-questions">
+        <div class="iq"><div class="iq-q"><b>Xin phép ai?</b> Cần define approval chain. Nhân viên → Manager trực tiếp → HR Admin? Hay chỉ 1 cấp?</div></div>
+        <div class="iq"><div class="iq-q"><b>Khi Manager vắng mặt:</b> Escalation sau 24h? Delegate approval? Cần define trước khi code workflow.</div></div>
+        <div class="iq"><div class="iq-q"><b>Auto-approve:</b> Có loại đơn nào auto-approve không (VD: OT dưới 2 giờ)?</div></div>
+        <div class="iq"><div class="iq-q"><b>Notification:</b> Manager nhận notification khi có đơn mới. Nhân viên nhận khi đơn được duyệt/từ chối. Qua app + email backup.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="item" onclick="tog(this)">
+    <div class="item-head">
+      <span class="item-pri p-should">SHOULD</span>
+      <span class="item-title">Odoo sync strategy — realtime hay batch?</span>
+      <div class="item-chevron"></div>
+    </div>
+    <div class="item-body">
+      <div class="item-questions">
+        <div class="iq"><div class="iq-q"><b>Realtime sync:</b> Mỗi checkin → push ngay lên Odoo. Nếu Odoo chậm/down → checkin bị delay. Cần circuit breaker.</div></div>
+        <div class="iq"><div class="iq-q"><b>Batch sync:</b> Lưu vào app DB trước → BullMQ job sync lên Odoo mỗi 15 phút hoặc cuối ngày. Odoo down không ảnh hưởng UX. Khuyến nghị.</div></div>
+        <div class="iq"><div class="iq-q"><b>Conflict khi Odoo có data khác:</b> AI app là source of truth cho attendance data → Odoo là destination. Không 2-way sync để tránh conflict.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TESTING -->
+<div class="section" id="sec-testing">
+  <div class="item" onclick="tog(this)">
+    <div class="item-head">
+      <span class="item-pri p-must">MUST</span>
+      <span class="item-title">Testing strategy — cần test gì trước tiên?</span>
+      <div class="item-chevron"></div>
+    </div>
+    <div class="item-body">
+      <div class="item-desc">Với team nhỏ, không thể test mọi thứ. Cần chọn đúng điểm để test có hiệu quả cao nhất.</div>
+      <div class="item-questions">
+        <div class="iq"><div class="iq-q"><b>Business logic (highest ROI):</b> HR tính công, OT, payroll calculation. Sai ở đây → ảnh hưởng lương. Unit test bắt buộc 100% coverage.</div></div>
+        <div class="iq"><div class="iq-q"><b>API integration tests:</b> Test các endpoint critical: auth, send message, checkin/checkout. Dùng Supertest + test DB riêng.</div></div>
+        <div class="iq"><div class="iq-q"><b>WebSocket tests:</b> Test message delivery, typing indicator, read receipt. Dùng Socket.io mock client.</div></div>
+        <div class="iq"><div class="iq-q"><b>Flutter widget tests:</b> Test chat bubble render, message list scroll. Bỏ qua e2e test ban đầu — quá chậm để setup.</div></div>
+      </div>
+      <div class="code-note">Priority: HR calc unit tests > API integration > WS > Flutter widget</div>
+    </div>
+  </div>
+
+  <div class="item" onclick="tog(this)">
+    <div class="item-head">
+      <span class="item-pri p-should">SHOULD</span>
+      <span class="item-title">Load testing — trước khi release</span>
+      <div class="item-chevron"></div>
+    </div>
+    <div class="item-body">
+      <div class="item-questions">
+        <div class="iq"><div class="iq-q"><b>WebSocket concurrent connections:</b> Simulate 50 users online cùng lúc, gửi messages liên tục. Dùng k6 hoặc Artillery.</div></div>
+        <div class="iq"><div class="iq-q"><b>Message burst:</b> Group chat, 10 người gửi cùng lúc → fan-out queue phải xử lý. Test xem BullMQ có bottleneck không.</div></div>
+        <div class="iq"><div class="iq-q"><b>File upload concurrent:</b> 5 user upload file 10MB cùng lúc → Bunny.net bandwidth + NestJS memory.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RELEASE -->
+<div class="section" id="sec-release">
+  <div class="item" onclick="tog(this)">
+    <div class="item-head">
+      <span class="item-pri p-must">MUST</span>
+      <span class="item-title">App update strategy — force update</span>
+      <div class="item-chevron"></div>
+    </div>
+    <div class="item-body">
+      <div class="item-desc">Internal app — bạn kiểm soát hoàn toàn việc update. Cần cơ chế ép user update khi có breaking changes.</div>
+      <div class="item-questions">
+        <div class="iq"><div class="iq-q"><b>Version check:</b> Mỗi khi app start → gọi GET /app/version → server trả về { min_version, latest_version }. Nếu app_version < min_version → force update dialog.</div></div>
+        <div class="iq"><div class="iq-q"><b>Desktop auto-update:</b> Flutter desktop dùng auto_updater package. Khi có version mới → notify user → download + install tự động trong background.</div></div>
+        <div class="iq"><div class="iq-q"><b>Mobile:</b> iOS qua TestFlight (internal distribution), Android qua APK direct download hoặc Play Store internal track. Không qua App Store public.</div></div>
+        <div class="iq"><div class="iq-q"><b>API versioning:</b> Prefix /api/v1/. Khi có breaking changes → /api/v2/ chạy song song trong 2 tuần để app cũ không bị crash ngay.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="item" onclick="tog(this)">
+    <div class="item-head">
+      <span class="item-pri p-must">MUST</span>
+      <span class="item-title">Data migration từ tools hiện tại</span>
+      <div class="item-chevron"></div>
+    </div>
+    <div class="item-body">
+      <div class="item-questions">
+        <div class="iq"><div class="iq-q"><b>Team đang dùng gì?</b> Zalo, Telegram, Slack? Có cần migrate history không, hay bắt đầu từ scratch?</div></div>
+        <div class="iq"><div class="iq-q"><b>HR data:</b> Import employees từ Odoo vào app → cần ETL script. Chạy một lần, verify, rồi mới onboard team.</div></div>
+        <div class="iq"><div class="iq-q"><b>Onboarding plan:</b> Không release cho toàn bộ team cùng lúc. Pilot với 5 người → fix bugs → rollout dần.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCT -->
+<div class="section" id="sec-product">
+  <div class="item" onclick="tog(this)">
+    <div class="item-head">
+      <span class="item-pri p-decide">DECIDE</span>
+      <span class="item-title">Thứ tự build — MVP scope là gì?</span>
+      <div class="item-chevron"></div>
+    </div>
+    <div class="item-body">
+      <div class="item-desc">Bẫy phổ biến nhất: cố build tất cả features cùng lúc → không ship được gì. Cần cut scope mạnh tay.</div>
+      <div class="item-questions">
+        <div class="iq"><div class="iq-q"><b>MVP v1.0 (4-6 tuần):</b> Auth Odoo SSO + Direct chat (text only) + Basic HR checkin/out. Ship nội bộ. Validate UX trước khi build thêm.</div></div>
+        <div class="iq"><div class="iq-q"><b>v1.1 (4 tuần tiếp):</b> Group chat + File/Voice attachment + Leave request workflow.</div></div>
+        <div class="iq"><div class="iq-q"><b>v1.2:</b> Voice/Video call (Agora) + Task sync Odoo + AI log task.</div></div>
+        <div class="iq"><div class="iq-q"><b>v2.0:</b> Bot framework + Advanced search + Reminder engine + Desktop apps.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="item" onclick="tog(this)">
+    <div class="item-head">
+      <span class="item-pri p-decide">DECIDE</span>
+      <span class="item-title">Monorepo hay separate repos?</span>
+      <div class="item-chevron"></div>
+    </div>
+    <div class="item-body">
+      <div class="item-questions">
+        <div class="iq"><div class="iq-q"><b>Option A — Monorepo:</b> 1 repo chứa cả Flutter + NestJS. Dễ share types/models. CI/CD phức tạp hơn. Phù hợp team nhỏ.</div></div>
+        <div class="iq"><div class="iq-q"><b>Option B — Separate repos:</b> flutter-app repo + nestjs-api repo. Độc lập, deploy riêng. Cần giữ API contract sync bằng tay hoặc OpenAPI schema.</div></div>
+        <div class="iq"><div class="iq-q"><b>Khuyến nghị cho team nhỏ:</b> Monorepo với Nx hoặc Turborepo. Shared TypeScript types giữa Flutter (via dart gen) và NestJS.</div></div>
+      </div>
+      <div class="code-note">/ (monorepo root)<br>├── apps/api        (NestJS)<br>├── apps/mobile     (Flutter)<br>├── packages/shared (shared constants, DTOs)<br>└── docker-compose.yml</div>
+    </div>
+  </div>
+
+  <div class="item" onclick="tog(this)">
+    <div class="item-head">
+      <span class="item-pri p-nice">NICE</span>
+      <span class="item-title">Analytics & feature flags</span>
+      <div class="item-chevron"></div>
+    </div>
+    <div class="item-body">
+      <div class="item-questions">
+        <div class="iq"><div class="iq-q"><b>Feature flags:</b> Toggle tính năng mới cho từng user/nhóm mà không cần deploy lại. PostHog (open source) hoặc self-hosted LaunchDarkly alternative.</div></div>
+        <div class="iq"><div class="iq-q"><b>Usage analytics:</b> Track features nào được dùng nhiều, screen nào bị bỏ. Giúp prioritize roadmap. PostHog làm được cả analytics + feature flags.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /sections -->
+</div>
+
+<script>
+function tog(el) {
+  el.classList.toggle('open');
+}
+function showCat(id, el) {
+  document.querySelectorAll('.section').forEach(function(s) {
+    s.classList.remove('on');
+    s.style.display = 'none';
+  });
+  var sec = document.getElementById('sec-' + id);
+  if (sec) { sec.classList.add('on'); sec.style.display = 'flex'; }
+  document.querySelectorAll('.cat').forEach(function(c) { c.classList.remove('on'); });
+  if (el) el.classList.add('on');
+}
+</script>

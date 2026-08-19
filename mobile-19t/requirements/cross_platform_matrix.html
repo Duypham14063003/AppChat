@@ -1,0 +1,161 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --k:#0A0A0A;--k2:#14141A;--k3:#1E1E28;--k4:#262632;
+  --g:#C9A84C;--g2:#E2C06A;--g3:#A8843A;
+  --gb:rgba(201,168,76,.10);--gbd:rgba(201,168,76,.22);--gbd2:rgba(201,168,76,.38);
+  --tx:#F2EDD8;--tx2:#9E9880;--tx3:#5A5648;
+  --gr:#2ECC71;--rd:#E74C3C;--bl:#3B8BDB;--am:#E2A030;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:transparent;color:var(--tx)}
+.wrap{padding:12px 0;display:flex;flex-direction:column;gap:16px}
+
+.matrix{background:var(--k2);border:1px solid var(--gbd);border-radius:14px;overflow:hidden}
+.mx-head{display:grid;grid-template-columns:140px repeat(5,1fr);background:var(--k3);border-bottom:1px solid var(--gbd)}
+.mx-hc{padding:10px 8px;text-align:center;font-size:10px;font-weight:700;color:var(--tx2);letter-spacing:.05em;border-right:1px solid var(--gbd)}
+.mx-hc:last-child{border-right:none}
+.mx-row{display:grid;grid-template-columns:140px repeat(5,1fr);border-bottom:1px solid var(--k4)}
+.mx-row:last-child{border-bottom:none}
+.mx-row:hover{background:rgba(201,168,76,.04)}
+.mx-lbl{padding:10px 12px;font-size:12px;font-weight:700;color:var(--tx);display:flex;align-items:center;gap:7px;border-right:1px solid var(--gbd)}
+.mx-c{padding:8px 6px;text-align:center;border-right:1px solid var(--k4);display:flex;align-items:center;justify-content:center}
+.mx-c:last-child{border-right:none}
+
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-g{background:var(--gr)}
+.dot-y{background:var(--am)}
+.dot-r{background:var(--rd)}
+
+.badge{padding:2px 7px;border-radius:5px;font-size:10px;font-weight:700;white-space:nowrap}
+.bg{background:rgba(46,204,113,.1);color:var(--gr);border:1px solid rgba(46,204,113,.2)}
+.by{background:rgba(226,160,48,.1);color:var(--am);border:1px solid rgba(226,160,48,.2)}
+.br{background:rgba(231,76,60,.1);color:var(--rd);border:1px solid rgba(231,76,60,.2)}
+.bb{background:var(--gb);color:var(--g2);border:1px solid var(--gbd)}
+
+.note-card{background:var(--k3);border:1px solid var(--gbd);border-radius:12px;padding:14px}
+.nc-title{font-size:12px;font-weight:700;color:var(--g2);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.nc-item{display:flex;gap:10px;padding:7px 0;border-bottom:1px solid var(--k4)}
+.nc-item:last-child{border-bottom:none}
+.nc-ic{width:26px;height:26px;background:var(--gb);border-radius:7px;border:1px solid var(--gbd2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nc-body{flex:1}
+.nc-nm{font-size:12px;font-weight:700;color:var(--tx)}
+.nc-sub{font-size:11px;color:var(--tx2);margin-top:2px;line-height:1.4}
+.nc-code{font-family:monospace;font-size:10px;color:var(--g2);background:var(--k4);border-radius:5px;padding:4px 8px;margin-top:5px}
+</style>
+
+<div class="wrap">
+
+<!-- Platform matrix -->
+<div class="matrix">
+  <div class="mx-head">
+    <div class="mx-hc" style="text-align:left;padding-left:12px">Platform</div>
+    <div class="mx-hc">Incoming<br>khi app killed</div>
+    <div class="mx-hc">Native call UI</div>
+    <div class="mx-hc">Background<br>audio</div>
+    <div class="mx-hc">Screen share</div>
+    <div class="mx-hc">Agora SDK</div>
+  </div>
+
+  <div class="mx-row">
+    <div class="mx-lbl"><div class="dot dot-g"></div>iOS</div>
+    <div class="mx-c"><span class="badge bg">CallKit + VoIP</span></div>
+    <div class="mx-c"><span class="badge bg">Native iOS</span></div>
+    <div class="mx-c"><span class="badge bg">OK</span></div>
+    <div class="mx-c"><span class="badge bg">OK</span></div>
+    <div class="mx-c"><span class="badge bb">agora_rtc_engine</span></div>
+  </div>
+  <div class="mx-row">
+    <div class="mx-lbl"><div class="dot dot-g"></div>Android</div>
+    <div class="mx-c"><span class="badge bg">FCM + Foreground Svc</span></div>
+    <div class="mx-c"><span class="badge by">Custom UI</span></div>
+    <div class="mx-c"><span class="badge bg">OK</span></div>
+    <div class="mx-c"><span class="badge bg">OK</span></div>
+    <div class="mx-c"><span class="badge bb">agora_rtc_engine</span></div>
+  </div>
+  <div class="mx-row">
+    <div class="mx-lbl"><div class="dot dot-g"></div>Windows</div>
+    <div class="mx-c"><span class="badge by">Toast notify</span></div>
+    <div class="mx-c"><span class="badge by">In-app UI</span></div>
+    <div class="mx-c"><span class="badge bg">OK</span></div>
+    <div class="mx-c"><span class="badge bg">OK</span></div>
+    <div class="mx-c"><span class="badge bb">agora_rtc_engine</span></div>
+  </div>
+  <div class="mx-row">
+    <div class="mx-lbl"><div class="dot dot-g"></div>macOS</div>
+    <div class="mx-c"><span class="badge by">Banner notify</span></div>
+    <div class="mx-c"><span class="badge by">In-app UI</span></div>
+    <div class="mx-c"><span class="badge bg">OK</span></div>
+    <div class="mx-c"><span class="badge bg">OK</span></div>
+    <div class="mx-c"><span class="badge bb">agora_rtc_engine</span></div>
+  </div>
+  <div class="mx-row">
+    <div class="mx-lbl"><div class="dot dot-y"></div>Web</div>
+    <div class="mx-c"><span class="badge br">Không hỗ trợ</span></div>
+    <div class="mx-c"><span class="badge by">Browser UI</span></div>
+    <div class="mx-c"><span class="badge by">Tab phải active</span></div>
+    <div class="mx-c"><span class="badge by">Chrome only</span></div>
+    <div class="mx-c"><span class="badge bb">agora_rtc_engine</span></div>
+  </div>
+</div>
+
+<!-- Critical notes -->
+<div class="note-card">
+  <div class="nc-title">
+    <div style="width:20px;height:20px;background:var(--gb);border:1px solid var(--gbd2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--g)">!</div>
+    Những điểm kỹ thuật cần chú ý nhất
+  </div>
+
+  <div class="nc-item">
+    <div class="nc-ic"><svg width="13" height="13" viewBox="0 0 13 13"><rect x="1" y="1" width="11" height="11" rx="3" stroke="#C9A84C" stroke-width="1.2" fill="none"/><line x1="4" y1="6.5" x2="6.5" y2="9" stroke="#C9A84C" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><line x1="6.5" y1="9" x2="9" y2="4" stroke="#C9A84C" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="nc-body">
+      <div class="nc-nm">iOS — VoIP Push Certificate (quan trọng nhất)</div>
+      <div class="nc-sub">iOS yêu cầu VoIP Push Certificate riêng (khác APN certificate thường) để wake app khi killed. Không có cert này → incoming call không hoạt động trên iOS khi app bị kill. Phải request trong Apple Developer Portal.</div>
+      <div class="nc-code">// flutter_callkit_incoming tự handle khi có cert<br>// Cần set trong Info.plist:<br>UIBackgroundModes: [voip, audio]</div>
+    </div>
+  </div>
+
+  <div class="nc-item">
+    <div class="nc-ic"><svg width="13" height="13" viewBox="0 0 13 13"><circle cx="6.5" cy="6.5" r="5.5" stroke="#C9A84C" stroke-width="1.2" fill="none"/><line x1="6.5" y1="3.5" x2="6.5" y2="6.5" stroke="#C9A84C" stroke-width="1.2" stroke-linecap="round"/><circle cx="6.5" cy="8.5" r=".8" fill="#C9A84C"/></svg></div>
+    <div class="nc-body">
+      <div class="nc-nm">Android — Foreground Service bắt buộc</div>
+      <div class="nc-sub">Android 12+ yêu cầu Foreground Service để giữ audio call khi app background. Không có → Android kill process → cuộc gọi bị ngắt sau ~1 phút.</div>
+      <div class="nc-code">// AndroidManifest.xml<br>&lt;uses-permission android:name="android.permission.FOREGROUND_SERVICE"/&gt;<br>&lt;uses-permission android:name="android.permission.FOREGROUND_SERVICE_PHONE_CALL"/&gt;</div>
+    </div>
+  </div>
+
+  <div class="nc-item">
+    <div class="nc-ic"><svg width="13" height="13" viewBox="0 0 13 13"><path d="M6.5 1L8 4.5H12L9 7l1 4-3.5-2L3 11l1-4-3-2.5h4z" stroke="#C9A84C" stroke-width="1.1" fill="none" stroke-linejoin="round"/></svg></div>
+    <div class="nc-body">
+      <div class="nc-nm">Token expiry — refresh mid-call</div>
+      <div class="nc-sub">Agora token expire sau 3600s (1 giờ). Cuộc gọi dài hơn 1 giờ sẽ bị ngắt nếu không handle. Giải pháp: set token expire = 6 giờ, hoặc implement onTokenPrivilegeWillExpire để refresh.</div>
+      <div class="nc-code">engine.setEventHandler(RtcEngineEventHandler(<br>  onTokenPrivilegeWillExpire: (token) async {<br>    final newToken = await api.renewToken(channelName);<br>    await engine.renewToken(newToken);<br>  }<br>))</div>
+    </div>
+  </div>
+
+  <div class="nc-item">
+    <div class="nc-ic"><svg width="13" height="13" viewBox="0 0 13 13"><path d="M2 10V5a4.5 4.5 0 019 0v5" stroke="#C9A84C" stroke-width="1.2" fill="none" stroke-linecap="round"/><rect x="1" y="9" width="4" height="3" rx="1" stroke="#C9A84C" stroke-width="1.2" fill="none"/><rect x="8" y="9" width="4" height="3" rx="1" stroke="#C9A84C" stroke-width="1.2" fill="none"/></svg></div>
+    <div class="nc-body">
+      <div class="nc-nm">agora_rtc_engine — cùng 1 package, mọi platform</div>
+      <div class="nc-sub">Đây là điểm mạnh nhất của stack Flutter + Agora. Code một lần, chạy trên iOS/Android/Windows/macOS/Web. Platform-specific chỉ ở phần incoming call notification — media logic hoàn toàn giống nhau.</div>
+      <div class="nc-code">// pubspec.yaml — một dependency duy nhất<br>agora_rtc_engine: ^6.5.3<br><br>// Cùng code cho mọi platform<br>await engine.joinChannel(token, channel, uid)</div>
+    </div>
+  </div>
+
+  <div class="nc-item">
+    <div class="nc-ic"><svg width="13" height="13" viewBox="0 0 13 13"><rect x="2" y="2" width="9" height="9" rx="2" stroke="#C9A84C" stroke-width="1.2" fill="none"/><line x1="5" y1="5" x2="8" y2="8" stroke="#C9A84C" stroke-width="1.2" stroke-linecap="round"/><line x1="8" y1="5" x2="5" y2="8" stroke="#C9A84C" stroke-width="1.2" stroke-linecap="round"/></svg></div>
+    <div class="nc-body">
+      <div class="nc-nm">Web — giới hạn lớn nhất</div>
+      <div class="nc-sub">Web app KHÔNG nhận được incoming call khi tab inactive hoặc browser đóng — FCM web push có giới hạn. Giải pháp: redirect user sang mobile/desktop app khi có cuộc gọi, hoặc keep web tab active với periodic ping.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Legend -->
+<div style="display:flex;gap:12px;flex-wrap:wrap;padding:4px 0">
+  <div style="display:flex;align-items:center;gap:5px"><div class="dot dot-g"></div><span style="font-size:11px;color:var(--tx2)">Hoạt động đầy đủ</span></div>
+  <div style="display:flex;align-items:center;gap:5px"><div class="dot dot-y"></div><span style="font-size:11px;color:var(--tx2)">Có giới hạn nhỏ</span></div>
+  <div style="display:flex;align-items:center;gap:5px"><div class="dot dot-r"></div><span style="font-size:11px;color:var(--tx2)">Không hỗ trợ / cần workaround</span></div>
+</div>
+
+</div>

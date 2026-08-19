@@ -1,0 +1,7 @@
+  **/*-firebase-adminsdk-*.json
+  **/*.p12
+  **/*.p12.bak
+  **/.env
+  **/.env.*
+  !**/.env.example
+

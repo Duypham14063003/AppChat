@@ -1,0 +1,340 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --k:#0A0A0A;--k2:#14141A;--k3:#1E1E28;--k4:#262632;
+  --g:#C9A84C;--g2:#E2C06A;--g3:#A8843A;
+  --gb:rgba(201,168,76,.10);--gbd:rgba(201,168,76,.22);--gbd2:rgba(201,168,76,.38);
+  --tx:#F2EDD8;--tx2:#9E9880;--tx3:#5A5648;
+  --gr:#2ECC71;--rd:#E74C3C;--bl:#3B8BDB;--am:#E2A030;--tl:#1D9E75;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:transparent;color:var(--tx)}
+
+.wrap{padding:16px 0;display:flex;flex-direction:column;gap:20px}
+
+/* step selector */
+.steps{display:flex;gap:6px;flex-wrap:wrap}
+.stp{padding:6px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--gbd);color:var(--tx2);transition:all .15s;letter-spacing:.03em;user-select:none}
+.stp.on{background:var(--g);color:var(--k);border-color:var(--g)}
+.stp:hover:not(.on){border-color:var(--g2);color:var(--tx)}
+
+/* diagram area */
+.diagram{background:var(--k2);border:1px solid var(--gbd);border-radius:14px;padding:20px;position:relative;min-height:340px}
+
+/* lanes */
+.lanes{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0;margin-bottom:16px}
+.lane-hdr{text-align:center;padding:8px 6px;border-radius:8px;font-size:11px;font-weight:700;letter-spacing:.04em}
+.lh-a{background:rgba(59,139,219,.12);color:#3B8BDB;border:1px solid rgba(59,139,219,.2)}
+.lh-n{background:var(--gb);color:var(--g2);border:1px solid var(--gbd)}
+.lh-ag{background:rgba(226,160,48,.1);color:var(--am);border:1px solid rgba(226,160,48,.2)}
+.lh-b{background:rgba(46,204,113,.1);color:var(--gr);border:1px solid rgba(46,204,113,.2)}
+
+/* timeline lines */
+.tl-wrap{position:relative;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0;min-height:220px}
+.tl-col{display:flex;flex-direction:column;align-items:center;position:relative;padding-top:8px}
+.tl-line{position:absolute;top:0;bottom:0;width:2px;background:var(--k4);left:50%;transform:translateX(-50%)}
+
+/* events */
+.evt{position:relative;z-index:2;margin:6px 0;display:flex;align-items:center;flex-direction:column;width:100%}
+.evt-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.evt-lbl{font-size:10px;font-weight:600;text-align:center;margin-top:4px;padding:0 4px;line-height:1.3;max-width:90px}
+.evt-box{border-radius:7px;padding:4px 8px;font-size:10px;font-weight:700;text-align:center;max-width:100%;margin-top:4px;line-height:1.3}
+
+/* arrows overlay - use SVG */
+.arr-svg{position:absolute;inset:0;pointer-events:none;overflow:visible}
+
+/* detail panel */
+.detail{background:var(--k3);border:1px solid var(--gbd);border-radius:12px;padding:16px}
+.detail-title{font-size:13px;font-weight:800;color:var(--g2);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.detail-step{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--k4)}
+.detail-step:last-child{border-bottom:none}
+.ds-num{width:20px;height:20px;border-radius:6px;background:var(--gb);border:1px solid var(--gbd2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--g);flex-shrink:0}
+.ds-body{flex:1}
+.ds-title{font-size:12px;font-weight:700;color:var(--tx)}
+.ds-sub{font-size:11px;color:var(--tx2);margin-top:2px;line-height:1.4}
+.ds-code{font-family:monospace;font-size:10px;color:var(--g2);background:var(--k4);border-radius:5px;padding:4px 8px;margin-top:6px;line-height:1.5}
+.tag{display:inline-block;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-right:4px}
+.tag-sig{background:rgba(59,139,219,.12);color:#3B8BDB;border:1px solid rgba(59,139,219,.18)}
+.tag-med{background:rgba(226,160,48,.1);color:var(--am);border:1px solid rgba(226,160,48,.18)}
+.tag-fcm{background:rgba(46,204,113,.1);color:var(--gr);border:1px solid rgba(46,204,113,.18)}
+.tag-sdk{background:var(--gb);color:var(--g2);border:1px solid var(--gbd)}
+</style>
+
+<div class="wrap">
+
+<div class="steps" id="steps">
+  <div class="stp on"  onclick="show(0,this)">1 · Khởi tạo cuộc gọi</div>
+  <div class="stp"     onclick="show(1,this)">2 · Token + Channel</div>
+  <div class="stp"     onclick="show(2,this)">3 · Push notify B</div>
+  <div class="stp"     onclick="show(3,this)">4 · B Accept</div>
+  <div class="stp"     onclick="show(4,this)">5 · Media stream</div>
+  <div class="stp"     onclick="show(5,this)">6 · Kết thúc</div>
+</div>
+
+<!-- STEP 0 — Initiate -->
+<div class="diagram" id="d0">
+  <div class="lanes">
+    <div class="lane-hdr lh-a">Caller (A)<br><span style="font-size:9px;font-weight:400;opacity:.7">Windows App</span></div>
+    <div class="lane-hdr lh-n">NestJS<br><span style="font-size:9px;font-weight:400;opacity:.7">Backend</span></div>
+    <div class="lane-hdr lh-ag">Agora<br><span style="font-size:9px;font-weight:400;opacity:.7">Cloud</span></div>
+    <div class="lane-hdr lh-b">Callee (B)<br><span style="font-size:9px;font-weight:400;opacity:.7">iOS App</span></div>
+  </div>
+  <div style="background:var(--k3);border:1px solid var(--gbd);border-radius:10px;padding:14px;text-align:center;margin-bottom:12px">
+    <div style="font-size:13px;font-weight:700;color:var(--g2);margin-bottom:6px">A bấm nút gọi cho B</div>
+    <div style="font-size:12px;color:var(--tx2)">Flutter gọi <span style="font-family:monospace;color:var(--g2);font-size:11px">callService.initiateCall(targetUserId)</span></div>
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap">
+      <div style="background:var(--gb);border:1px solid var(--gbd2);border-radius:8px;padding:6px 12px;font-size:11px;color:var(--g2)">callId = UUID()</div>
+      <div style="background:var(--gb);border:1px solid var(--gbd2);border-radius:8px;padding:6px 12px;font-size:11px;color:var(--g2)">channelName = "call_" + callId</div>
+      <div style="background:var(--gb);border:1px solid var(--gbd2);border-radius:8px;padding:6px 12px;font-size:11px;color:var(--g2)">callType = VOICE | VIDEO</div>
+    </div>
+  </div>
+  <div class="detail">
+    <div class="detail-title">Caller app — trạng thái ngay lập tức</div>
+    <div class="detail-step">
+      <div class="ds-num">1</div>
+      <div class="ds-body">
+        <div class="ds-title">Show calling screen <span class="tag tag-sdk">Flutter UI</span></div>
+        <div class="ds-sub">Hiện màn hình gọi ngay (optimistic) — không đợi server confirm. Ring tone bắt đầu phát.</div>
+      </div>
+    </div>
+    <div class="detail-step">
+      <div class="ds-num">2</div>
+      <div class="ds-body">
+        <div class="ds-title">POST /calls/initiate <span class="tag tag-sig">Signaling</span></div>
+        <div class="ds-code">{ callId, callerId, calleeId, type: "voice", channelName }</div>
+        <div class="ds-sub">Gửi lên NestJS qua REST — không qua WebSocket vì cần HTTP response với token.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 1 — Token -->
+<div class="diagram" id="d1" style="display:none">
+  <div class="lanes">
+    <div class="lane-hdr lh-a">Caller (A)</div>
+    <div class="lane-hdr lh-n">NestJS</div>
+    <div class="lane-hdr lh-ag">Agora Cloud</div>
+    <div class="lane-hdr lh-b">Callee (B)</div>
+  </div>
+  <div class="detail">
+    <div class="detail-title">NestJS tạo Agora Token cho cả 2 phía</div>
+    <div class="detail-step">
+      <div class="ds-num">1</div>
+      <div class="ds-body">
+        <div class="ds-title">Lưu call record vào DB <span class="tag tag-sig">Backend</span></div>
+        <div class="ds-code">INSERT calls (id, caller_id, callee_id, channel, status='ringing', created_at)</div>
+      </div>
+    </div>
+    <div class="detail-step">
+      <div class="ds-num">2</div>
+      <div class="ds-body">
+        <div class="ds-title">Generate Agora RTC Token <span class="tag tag-sdk">Agora SDK</span></div>
+        <div class="ds-sub">NestJS dùng Agora server-side SDK để tạo token — không expose App Secret ra client.</div>
+        <div class="ds-code">const token = RtcTokenBuilder.buildTokenWithUid(<br>  appId, appCertificate,<br>  channelName, uid,<br>  RtcRole.PUBLISHER,<br>  expireTime  // 3600s<br>)</div>
+      </div>
+    </div>
+    <div class="detail-step">
+      <div class="ds-num">3</div>
+      <div class="ds-body">
+        <div class="ds-title">Trả về cho caller A <span class="tag tag-sig">Response</span></div>
+        <div class="ds-code">{ callId, channelName, agoraToken, appId, uid }</div>
+        <div class="ds-sub">Caller nhận token → sẵn sàng join channel Agora. Token expire 1 giờ — đủ cho mọi cuộc gọi thực tế.</div>
+      </div>
+    </div>
+    <div class="detail-step">
+      <div class="ds-num">4</div>
+      <div class="ds-body">
+        <div class="ds-title">Caller A join Agora channel <span class="tag tag-med">Media</span></div>
+        <div class="ds-code">await engine.joinChannel(<br>  token: agoraToken,<br>  channelId: channelName,<br>  uid: myUid<br>)</div>
+        <div class="ds-sub">Caller join trước — khi B accept sẽ join vào cùng channel. Lúc này mic chưa bật, chỉ connect.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 2 — Push notify -->
+<div class="diagram" id="d2" style="display:none">
+  <div class="lanes">
+    <div class="lane-hdr lh-a">Caller (A)</div>
+    <div class="lane-hdr lh-n">NestJS</div>
+    <div class="lane-hdr lh-ag">Firebase FCM</div>
+    <div class="lane-hdr lh-b">Callee (B) — iOS</div>
+  </div>
+  <div class="detail">
+    <div class="detail-title">Gửi incoming call tới B — cross-platform</div>
+    <div class="detail-step">
+      <div class="ds-num">1</div>
+      <div class="ds-body">
+        <div class="ds-title">NestJS gửi FCM push <span class="tag tag-fcm">Firebase</span></div>
+        <div class="ds-sub">Dùng firebase-admin để push notification tới device token của B. Payload đặc biệt — không phải notification thường.</div>
+        <div class="ds-code">firebaseAdmin.messaging().send({<br>  token: calleeDeviceToken,<br>  data: {<br>    type: "INCOMING_CALL",<br>    callId, callerId, callerName,<br>    channelName, agoraToken,<br>    callType: "voice"<br>  },<br>  apns: { payload: { aps: {<br>    "content-available": 1  // silent push iOS<br>  }}}<br>})</div>
+      </div>
+    </div>
+    <div class="detail-step">
+      <div class="ds-num">2</div>
+      <div class="ds-body">
+        <div class="ds-title">iOS — CallKit thức dậy <span class="tag tag-sdk">iOS Native</span></div>
+        <div class="ds-sub">flutter_callkit_incoming nhận silent push → trigger native CallKit UI (màn hình gọi đến của iOS). Hoạt động ngay cả khi app bị kill.</div>
+        <div class="ds-code">FlutterCallkitIncoming.showCallkitIncoming(<br>  CallKitParams(<br>    id: callId,<br>    nameCaller: callerName,<br>    type: 0,  // 0=audio, 1=video<br>    duration: 30000,<br>  )<br>)</div>
+      </div>
+    </div>
+    <div class="detail-step">
+      <div class="ds-num">3</div>
+      <div class="ds-body">
+        <div class="ds-title">Android — Custom incoming call UI <span class="tag tag-sdk">Android</span></div>
+        <div class="ds-sub">Android không có CallKit. Dùng flutter_callkit_incoming với custom notification (full-screen intent). Vẫn hoạt động khi app background/killed — FCM wake up app.</div>
+      </div>
+    </div>
+    <div class="detail-step">
+      <div class="ds-num">4</div>
+      <div class="ds-body">
+        <div class="ds-title">Windows/macOS — App foreground notify <span class="tag tag-sig">Desktop</span></div>
+        <div class="ds-sub">Desktop app thường luôn chạy foreground — WebSocket nhận event INCOMING_CALL trực tiếp. Nếu minimize: Windows toast notification, macOS banner notification.</div>
+        <div class="ds-code">// WebSocket event (nếu B đang online)<br>ws.on('INCOMING_CALL', (data) => {<br>  showCallDialog(data)<br>})</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 3 — B Accept -->
+<div class="diagram" id="d3" style="display:none">
+  <div class="lanes">
+    <div class="lane-hdr lh-a">Caller (A)</div>
+    <div class="lane-hdr lh-n">NestJS</div>
+    <div class="lane-hdr lh-ag">Agora SFU</div>
+    <div class="lane-hdr lh-b">Callee (B)</div>
+  </div>
+  <div class="detail">
+    <div class="detail-title">B bấm Accept — join vào cùng Agora channel</div>
+    <div class="detail-step">
+      <div class="ds-num">1</div>
+      <div class="ds-body">
+        <div class="ds-title">B gọi POST /calls/:id/accept <span class="tag tag-sig">Signaling</span></div>
+        <div class="ds-sub">NestJS cập nhật call status → ACTIVE, generate token cho B (uid khác A).</div>
+        <div class="ds-code">// Response trả về cho B<br>{ channelName, agoraToken, appId, uid: B_uid }</div>
+      </div>
+    </div>
+    <div class="detail-step">
+      <div class="ds-num">2</div>
+      <div class="ds-body">
+        <div class="ds-title">NestJS notify A qua WebSocket <span class="tag tag-sig">Signaling</span></div>
+        <div class="ds-sub">A đang ở trạng thái "ringing" — khi B accept, NestJS push WebSocket event tới A. Ring tone dừng, timer bắt đầu.</div>
+        <div class="ds-code">ws.emit('CALL_ACCEPTED', { callId, calleeId })</div>
+      </div>
+    </div>
+    <div class="detail-step">
+      <div class="ds-num">3</div>
+      <div class="ds-body">
+        <div class="ds-title">B join Agora channel <span class="tag tag-med">Media</span></div>
+        <div class="ds-sub">B join cùng channelName với token của mình. Agora SFU nhận ra 2 user trong cùng channel → bắt đầu relay audio/video.</div>
+        <div class="ds-code">await engine.joinChannel(<br>  token: B_agoraToken,<br>  channelId: channelName,  // SAME channel<br>  uid: B_uid<br>)</div>
+      </div>
+    </div>
+    <div class="detail-step">
+      <div class="ds-num">4</div>
+      <div class="ds-body">
+        <div class="ds-title">onUserJoined callback kích hoạt trên A <span class="tag tag-sdk">Agora SDK</span></div>
+        <div class="ds-sub">Agora SDK trên máy A nhận event onUserJoined(B_uid) → enable audio output → hai bên nghe nhau.</div>
+        <div class="ds-code">engine.setEventHandler(RtcEngineEventHandler(<br>  onUserJoined: (uid, elapsed) {<br>    // B đã vào! Start audio<br>  }<br>))</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 4 — Media stream -->
+<div class="diagram" id="d4" style="display:none">
+  <div class="lanes">
+    <div class="lane-hdr lh-a">Caller (A) — Windows</div>
+    <div class="lane-hdr" style="background:rgba(226,160,48,.1);color:var(--am);border:1px solid rgba(226,160,48,.2);border-radius:8px;padding:8px 6px;text-align:center;font-size:11px;font-weight:700">Agora SFU<br><span style="font-size:9px;opacity:.7">Singapore Edge</span></div>
+    <div class="lane-hdr lh-b">Callee (B) — iOS</div>
+    <div class="lane-hdr" style="background:rgba(29,158,117,.1);color:var(--tl);border:1px solid rgba(29,158,117,.2);border-radius:8px;padding:8px 6px;text-align:center;font-size:11px;font-weight:700">Codec<br><span style="font-size:9px;opacity:.7">Transcoding</span></div>
+  </div>
+  <div class="detail">
+    <div class="detail-title">Media flow — Agora SFU làm trung gian</div>
+    <div class="detail-step">
+      <div class="ds-num">1</div>
+      <div class="ds-body">
+        <div class="ds-title">A capture audio → encode → gửi SFU <span class="tag tag-med">Media</span></div>
+        <div class="ds-sub">Windows mic capture → Agora SDK encode (Opus 48kHz) → UDP packets tới SFU edge server gần nhất (VN: Singapore).</div>
+        <div class="ds-code">// Agora tự handle — developer không cần config<br>// Latency Windows → Singapore SFU: ~30-50ms</div>
+      </div>
+    </div>
+    <div class="detail-step">
+      <div class="ds-num">2</div>
+      <div class="ds-body">
+        <div class="ds-title">SFU relay → B (iOS) <span class="tag tag-med">Relay</span></div>
+        <div class="ds-sub">SFU nhận stream của A → forward đến B. Không decode/re-encode (pure relay) → latency thấp. Tổng RTT thực tế: 60-120ms.</div>
+      </div>
+    </div>
+    <div class="detail-step">
+      <div class="ds-num">3</div>
+      <div class="ds-body">
+        <div class="ds-title">Adaptive bitrate — key feature <span class="tag tag-sdk">Agora Auto</span></div>
+        <div class="ds-sub">Agora SDK tự điều chỉnh bitrate theo bandwidth. iOS trên 3G yếu → SFU transcode xuống bitrate thấp hơn → không bị drop call.</div>
+        <div class="ds-code">// Không cần code gì — Agora tự handle<br>// Audio: 6kbps (bad) → 48kbps (good)<br>// Video: 100kbps (bad) → 1Mbps (good)</div>
+      </div>
+    </div>
+    <div class="detail-step">
+      <div class="ds-num">4</div>
+      <div class="ds-body">
+        <div class="ds-title">Cross-platform codec compatibility <span class="tag tag-sdk">Key point</span></div>
+        <div class="ds-sub">Windows (Flutter desktop) và iOS (Flutter mobile) dùng cùng agora_rtc_engine package. Agora SDK handle codec negotiation tự động — developer KHÔNG cần quan tâm tới Windows vs iOS vs Android vs Web.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 5 — End call -->
+<div class="diagram" id="d5" style="display:none">
+  <div class="lanes">
+    <div class="lane-hdr lh-a">Caller (A)</div>
+    <div class="lane-hdr lh-n">NestJS</div>
+    <div class="lane-hdr lh-ag">Agora</div>
+    <div class="lane-hdr lh-b">Callee (B)</div>
+  </div>
+  <div class="detail">
+    <div class="detail-title">Kết thúc cuộc gọi — cleanup đúng thứ tự</div>
+    <div class="detail-step">
+      <div class="ds-num">1</div>
+      <div class="ds-body">
+        <div class="ds-title">Bên nào bấm End → POST /calls/:id/end <span class="tag tag-sig">Signaling</span></div>
+        <div class="ds-code">{ callId, duration: 247, endedBy: "caller" }</div>
+      </div>
+    </div>
+    <div class="detail-step">
+      <div class="ds-num">2</div>
+      <div class="ds-body">
+        <div class="ds-title">NestJS notify bên còn lại + lưu log <span class="tag tag-sig">Backend</span></div>
+        <div class="ds-code">// WebSocket push<br>ws.emit('CALL_ENDED', { callId, duration })<br>// DB update<br>UPDATE calls SET status='ended', duration=247, ended_at=NOW()</div>
+      </div>
+    </div>
+    <div class="detail-step">
+      <div class="ds-num">3</div>
+      <div class="ds-body">
+        <div class="ds-title">Leave Agora channel <span class="tag tag-med">Media</span></div>
+        <div class="ds-code">await engine.leaveChannel()<br>await engine.disableAudio() // release mic<br>// iOS: end CallKit session<br>FlutterCallkitIncoming.endCall(callId)</div>
+      </div>
+    </div>
+    <div class="detail-step">
+      <div class="ds-num">4</div>
+      <div class="ds-body">
+        <div class="ds-title">Lưu call log vào chat conversation <span class="tag tag-sig">UX</span></div>
+        <div class="ds-sub">Sau khi kết thúc, tự động gửi 1 tin nhắn vào conversation: "Cuộc gọi thoại · 4:07 phút". User tap vào có thể gọi lại ngay.</div>
+        <div class="ds-code">INSERT messages (conv_id, type='CALL',<br>  content: { duration: 247, callType: 'voice' })</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+function show(idx, el) {
+  for (var i = 0; i < 6; i++) {
+    var d = document.getElementById('d' + i);
+    if (d) d.style.display = (i === idx) ? 'block' : 'none';
+  }
+  document.querySelectorAll('.stp').forEach(function(s) { s.classList.remove('on'); });
+  if (el) el.classList.add('on');
+}
+</script>

@@ -1,0 +1,539 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --k:#0A0A0A;--k2:#111114;--k3:#18181C;--k4:#1F1F26;--k5:#28282F;
+  --g:#C9A84C;--g2:#E2C06A;--g3:#A8843A;
+  --gb:rgba(201,168,76,0.10);--gbd:rgba(201,168,76,0.22);--gbd2:rgba(201,168,76,0.38);
+  --tx:#F2EDD8;--tx2:#9E9880;--tx3:#5A5648;
+  --gr:#2ECC71;--rd:#E74C3C;--bl:#3B8BDB;
+  --br:rgba(255,255,255,0.06);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;color:var(--tx);background:transparent}
+
+.root{padding:12px 0 28px;display:flex;flex-direction:column;gap:0}
+
+.tabs{display:flex;background:var(--k3);border-radius:12px;padding:4px;margin-bottom:20px;border:1px solid var(--gbd);gap:0}
+.tab{flex:1;padding:7px 2px;border-radius:8px;font-size:10px;font-weight:700;text-align:center;cursor:pointer;color:var(--tx2);transition:all .18s;letter-spacing:.02em;user-select:none}
+.tab.on{background:var(--g);color:#0A0A0A}
+
+.stage{display:flex;justify-content:center}
+.frame{background:var(--k2);border-radius:40px;padding:4px;border:1.5px solid var(--gbd2);box-shadow:0 0 40px rgba(201,168,76,.12),0 28px 70px rgba(0,0,0,.75);position:relative}
+.frame::before{content:'';position:absolute;top:4px;left:50%;transform:translateX(-50%);width:76px;height:5px;background:var(--k5);border-radius:3px;z-index:10}
+.phone{width:262px;height:554px;background:var(--k);border-radius:36px;overflow:hidden;display:flex;flex-direction:column}
+
+.sb{display:flex;justify-content:space-between;align-items:center;padding:14px 18px 5px;flex-shrink:0}
+.sb-t{font-size:12px;font-weight:700;color:var(--tx)}
+.sb-r{display:flex;gap:4px;align-items:center}
+.sb-w{width:11px;height:8px;border-top:2px solid var(--tx2);border-radius:50% 50% 0 0;opacity:.7}
+.sb-s{width:10px;height:7px;background:var(--tx2);border-radius:1.5px;opacity:.7}
+.sb-b{width:18px;height:9px;border:1.5px solid var(--tx2);border-radius:2px;opacity:.7;position:relative}
+.sb-b::before{content:'';position:absolute;left:2px;top:1px;width:55%;height:5px;background:var(--gr);border-radius:1px}
+.sb-b::after{content:'';position:absolute;right:-4px;top:50%;transform:translateY(-50%);width:2.5px;height:4px;background:var(--tx2);border-radius:0 1px 1px 0}
+
+.pv{display:none;flex-direction:column;flex:1;overflow:hidden}
+.pv.on{display:flex}
+
+/* back row */
+.brow{display:flex;align-items:center;gap:8px;padding:4px 10px 10px;border-bottom:1px solid var(--gbd);flex-shrink:0}
+.bk{width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.bkc{width:7px;height:7px;border-left:2px solid var(--g3);border-bottom:2px solid var(--g3);transform:rotate(45deg);margin-left:4px}
+
+/* scroll pane */
+.sp{flex:1;overflow-y:auto;padding:0 10px 12px}
+.sp::-webkit-scrollbar{display:none}
+
+/* logo diamond */
+.ld{width:10px;height:10px;background:var(--g);clip-path:polygon(50% 0%,100% 38%,82% 100%,18% 100%,0% 38%)}
+
+/* bnav */
+.bnav{display:flex;justify-content:space-around;padding:8px 0 14px;border-top:1px solid var(--gbd);flex-shrink:0;background:rgba(10,10,10,.95)}
+.bni{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:2px 8px;position:relative}
+.bni-dot{position:absolute;top:-1px;right:4px;width:5px;height:5px;border-radius:50%;background:var(--g)}
+.bni-l{font-size:9px;color:var(--tx3);font-weight:600;letter-spacing:.04em}
+.bni.on .bni-l{color:var(--g)}
+
+/* ════ GROUP INFO ════ */
+.gi-hero{display:flex;flex-direction:column;align-items:center;gap:8px;padding:18px 0 14px;border-bottom:1px solid var(--gbd);flex-shrink:0}
+.gi-av{width:62px;height:62px;border-radius:18px;background:var(--gb);border:2px solid var(--gbd2);display:flex;align-items:center;justify-content:center}
+.gi-avd{width:26px;height:26px;background:var(--g);clip-path:polygon(50% 0%,100% 38%,82% 100%,18% 100%,0% 38%)}
+.gi-nm{font-size:15px;font-weight:800;color:var(--tx);letter-spacing:.02em}
+.gi-sb{font-size:11px;color:var(--tx2)}
+.gi-acts{display:flex;gap:18px;margin-top:4px}
+.gia{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
+.gia-ic{width:36px;height:36px;border-radius:12px;background:var(--gb);border:1px solid var(--gbd2);display:flex;align-items:center;justify-content:center}
+.gia-l{font-size:9px;color:var(--tx2);letter-spacing:.03em}
+.gi-st{font-size:9px;font-weight:700;color:var(--g2);text-transform:uppercase;letter-spacing:.08em;margin:10px 0 6px 2px}
+.gmb{display:flex;align-items:center;gap:10px;padding:7px 2px;border-bottom:1px solid var(--br);cursor:pointer}
+.gmb:last-child{border-bottom:none}
+.gmav{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--k);border:1px solid rgba(201,168,76,.3);position:relative;flex-shrink:0}
+.gmav.on::after{content:'';position:absolute;bottom:0;right:0;width:8px;height:8px;border-radius:50%;background:var(--gr);border:2px solid var(--k)}
+.gmi{flex:1}.gmn{font-size:12px;font-weight:700;color:var(--tx)}.gmr{font-size:9px;color:var(--tx3);margin-top:1px}
+.badge{font-size:9px;padding:2px 6px;border-radius:5px;font-weight:700}
+.b-a{background:var(--gb);color:var(--g2);border:1px solid var(--gbd)}
+.b-y{background:rgba(46,204,113,.1);color:var(--gr);border:1px solid rgba(46,204,113,.2)}
+.mg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:6px}
+.mgt{aspect-ratio:1;background:var(--k3);border-radius:8px;border:1px solid var(--gbd);display:flex;align-items:center;justify-content:center;font-size:20px;opacity:.3;cursor:pointer}
+
+/* ════ VOICE CALL ════ */
+.vc-bg{position:absolute;inset:0;background:var(--k)}
+.vc-grid{position:absolute;inset:0;opacity:.04;background-image:repeating-linear-gradient(0deg,transparent,transparent 22px,rgba(201,168,76,1) 22px,rgba(201,168,76,1) 23px),repeating-linear-gradient(90deg,transparent,transparent 22px,rgba(201,168,76,1) 22px,rgba(201,168,76,1) 23px)}
+.vc-body{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;flex:1;padding:8px 0 0;overflow:hidden}
+.ring-wrap{position:relative;width:88px;height:88px;display:flex;align-items:center;justify-content:center;margin-top:12px}
+.ring{position:absolute;border-radius:50%;border:1px solid var(--gbd);animation:rp 2s ease-in-out infinite}
+.ring:nth-child(1){width:88px;height:88px}
+.ring:nth-child(2){width:112px;height:112px;animation-delay:.4s;opacity:.55}
+.ring:nth-child(3){width:136px;height:136px;animation-delay:.8s;opacity:.28}
+@keyframes rp{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.04);opacity:.35}}
+.cav{width:70px;height:70px;border-radius:50%;background:var(--g);display:flex;align-items:center;justify-content:center;font-size:21px;font-weight:800;color:var(--k);border:2px solid var(--g2);z-index:2}
+.cnm{font-size:19px;font-weight:800;color:var(--tx);letter-spacing:.02em;margin-top:14px}
+.cst{font-size:11px;color:var(--g2);letter-spacing:.07em;text-transform:uppercase;margin-top:3px}
+.ctm{font-size:26px;font-weight:300;color:var(--tx);letter-spacing:.1em;margin-top:6px;font-variant-numeric:tabular-nums}
+.wv{display:flex;align-items:center;gap:3px;height:26px;margin-top:10px}
+.wvb{width:3px;border-radius:3px;background:var(--g);animation:wa var(--d,.8s) ease-in-out infinite alternate}
+@keyframes wa{from{height:4px;opacity:.4}to{height:var(--h,18px);opacity:1}}
+.cbts{display:flex;gap:10px;margin-top:auto;padding:0 16px 14px;width:100%;justify-content:space-between}
+.cb{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer}
+.cb-ic{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform .12s}
+.cb-ic:active{transform:scale(.91)}
+.cb-ic.e{background:var(--rd);width:62px;height:62px}
+.cb-ic.s{background:var(--k3);border:1px solid var(--gbd)}
+.cb-ic.a{background:var(--gb);border:1px solid var(--gbd2)}
+.cb-l{font-size:9px;color:var(--tx3);font-weight:600;letter-spacing:.04em}
+
+/* ════ VIDEO CALL ════ */
+.vid-area{flex:1;position:relative;background:var(--k3);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.vid-main-av{display:flex;flex-direction:column;align-items:center;gap:8px}
+.vid-self{position:absolute;bottom:10px;right:10px;width:68px;height:88px;background:var(--k4);border-radius:12px;border:2px solid var(--gbd2);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.vid-self-av{width:30px;height:30px;border-radius:50%;background:var(--g);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--k)}
+.vid-ntag{position:absolute;bottom:10px;left:10px;background:rgba(10,10,10,.75);border:1px solid var(--gbd);border-radius:6px;padding:3px 8px;font-size:10px;color:var(--tx)}
+.vid-top{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:linear-gradient(rgba(10,10,10,.8),transparent)}
+.vid-t{font-size:12px;color:var(--g2);font-weight:600}
+.vid-q{font-size:9px;color:var(--g2);background:var(--gb);padding:3px 8px;border-radius:6px;border:1px solid var(--gbd)}
+.vid-ctrls{display:flex;padding:8px 10px;background:rgba(10,10,10,.92);border-top:1px solid var(--gbd);flex-shrink:0}
+.vct{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;cursor:pointer}
+.vct-ic{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.vct-ic.e{background:var(--rd)}
+.vct-ic.s{background:var(--k3);border:1px solid var(--gbd)}
+.vct-ic.a{background:var(--gb);border:1px solid var(--gbd2)}
+.vct-l{font-size:8px;color:var(--tx3);font-weight:600}
+
+/* ════ TASKS ════ */
+.tk-hdr{padding:6px 14px 10px;border-bottom:1px solid var(--gbd);flex-shrink:0}
+.tk-ttl{font-size:15px;font-weight:800;color:var(--tx);display:flex;align-items:center;gap:8px}
+.tk-sb{font-size:10px;color:var(--tx3);margin-top:2px}
+.tk-tabs{display:flex;padding:8px 10px;border-bottom:1px solid var(--br);flex-shrink:0;gap:4px}
+.tkt{flex:1;padding:5px 4px;text-align:center;font-size:10px;font-weight:700;cursor:pointer;border-radius:7px;color:var(--tx3);letter-spacing:.03em}
+.tkt.on{background:var(--gb);color:var(--g2);border:1px solid var(--gbd)}
+.tklist{flex:1;overflow-y:auto;padding:8px 10px 0}
+.tklist::-webkit-scrollbar{display:none}
+.tglbl{font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;margin:6px 0 5px;display:flex;align-items:center;gap:5px}
+.tgd{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.tcard{background:var(--k3);border:1px solid var(--gbd);border-radius:10px;padding:10px;margin-bottom:6px;cursor:pointer;transition:border-color .15s,transform .1s}
+.tcard:hover{border-color:var(--g);transform:translateX(2px)}
+.tc-top{display:flex;align-items:flex-start;gap:8px}
+.tc-chk{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--g3);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center}
+.tc-chk.dn{background:var(--g);border-color:var(--g)}
+.chkm{width:8px;height:5px;border-left:1.5px solid var(--k);border-bottom:1.5px solid var(--k);transform:rotate(-45deg);margin-top:-1px}
+.tc-ttl{font-size:12px;font-weight:700;color:var(--tx);flex:1;line-height:1.3}
+.tc-ttl.dn{color:var(--tx3);text-decoration:line-through}
+.tc-meta{display:flex;align-items:center;gap:5px;margin-top:6px;flex-wrap:wrap}
+.tpl{padding:2px 6px;border-radius:5px;font-size:9px;font-weight:700}
+.tp-f{background:var(--gb);color:var(--g2);border:1px solid var(--gbd)}
+.tp-b{background:rgba(231,76,60,.12);color:var(--rd);border:1px solid rgba(231,76,60,.18)}
+.tp-d{background:rgba(59,139,219,.1);color:var(--bl);border:1px solid rgba(59,139,219,.18)}
+.tdue{font-size:9px;color:var(--tx3);margin-left:auto}
+.tdue.lt{color:var(--rd)}
+.tc-avs{display:flex;margin-top:5px}
+.tca{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:800;color:var(--k);border:1.5px solid var(--k3);margin-right:-5px}
+.tc-prog{margin-top:7px}
+.tp-bg{height:3px;background:var(--k4);border-radius:2px}
+.tp-fill{height:3px;background:var(--g);border-radius:2px}
+.tp-pct{font-size:9px;color:var(--g3);margin-top:2px}
+.ai-fab{width:42px;height:42px;border-radius:50%;background:var(--g);display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid var(--g2);position:absolute;bottom:18px;right:12px;z-index:10;box-shadow:0 4px 18px rgba(201,168,76,.38)}
+.ai-fab span{font-size:15px;font-weight:800;color:var(--k);line-height:1}
+.ai-sht{position:absolute;bottom:0;left:0;right:0;background:var(--k2);border-radius:18px 18px 0 0;border-top:1px solid var(--gbd2);padding:12px;z-index:20}
+.ai-hdl{width:30px;height:3px;background:var(--k5);border-radius:2px;margin:0 auto 10px}
+.ai-ttl{font-size:12px;font-weight:700;color:var(--g2);margin-bottom:7px;display:flex;align-items:center;gap:5px}
+.ai-inp{background:var(--k3);border:1px solid var(--gbd);border-radius:9px;padding:8px 10px;font-size:11px;color:var(--tx2);line-height:1.5;margin-bottom:7px}
+.ai-prev{background:var(--gb);border:1px solid var(--gbd);border-radius:9px;padding:8px 10px;margin-bottom:7px}
+.ai-pl{font-size:9px;font-weight:700;color:var(--g2);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.ai-pr{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--tx);margin-top:3px}
+.ai-pk{color:var(--tx3);font-size:10px;width:52px;flex-shrink:0}
+.ai-acts{display:flex;gap:7px}
+.ai-bt{flex:1;padding:8px;border-radius:8px;text-align:center;font-size:11px;font-weight:700;cursor:pointer}
+.ai-bt.c{background:var(--g);color:var(--k)}
+.ai-bt.x{background:var(--k3);color:var(--tx2);border:1px solid var(--gbd)}
+
+/* ════ REMINDER ════ */
+.rm-hdr{padding:8px 14px 10px;border-bottom:1px solid var(--gbd);flex-shrink:0}
+.rm-ttl{font-size:15px;font-weight:800;color:var(--tx);display:flex;align-items:center;justify-content:space-between}
+.rm-sb{font-size:10px;color:var(--tx3);margin-top:2px}
+.rm-sec{font-size:9px;font-weight:700;color:var(--g2);text-transform:uppercase;letter-spacing:.08em;padding:10px 0 5px}
+.rcard{background:var(--k3);border-left:3px solid var(--g);border-radius:0 10px 10px 0;padding:9px 10px 9px 11px;margin-bottom:7px;display:flex;gap:9px;align-items:flex-start;cursor:pointer;transition:background .12s}
+.rcard:hover{background:var(--k4)}
+.rcard.rd{border-left-color:var(--rd)}
+.rcard.bl{border-left-color:var(--bl)}
+.rcard.dn{opacity:.45;border-left-color:var(--tx3)}
+.rtm{font-size:10px;font-weight:700;color:var(--g2);flex-shrink:0;width:34px}
+.ri{flex:1}
+.rttl{font-size:12px;font-weight:700;color:var(--tx);line-height:1.3}
+.rsb{font-size:10px;color:var(--tx2);margin-top:2px}
+.rtag{display:inline-block;font-size:9px;padding:1px 6px;border-radius:4px;font-weight:700;margin-top:4px}
+.rt-hr{background:rgba(46,204,113,.1);color:var(--gr);border:1px solid rgba(46,204,113,.2)}
+.rt-mt{background:rgba(59,139,219,.1);color:var(--bl);border:1px solid rgba(59,139,219,.18)}
+.rt-tk{background:var(--gb);color:var(--g2);border:1px solid var(--gbd)}
+.rt-ot{background:rgba(231,76,60,.1);color:var(--rd);border:1px solid rgba(231,76,60,.18)}
+.rchk{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--g3);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rchk.dn{background:var(--g);border-color:var(--g)}
+.rm-add{display:flex;align-items:center;justify-content:center;width:28px;height:28px;background:var(--gb);border:1px solid var(--gbd2);border-radius:8px;cursor:pointer}
+</style>
+
+<div class="root">
+<div class="tabs">
+  <div class="tab on"  onclick="sw('group',this)">Group Info</div>
+  <div class="tab"     onclick="sw('call',this)">Voice Call</div>
+  <div class="tab"     onclick="sw('video',this)">Video Call</div>
+  <div class="tab"     onclick="sw('task',this)">Tasks</div>
+  <div class="tab"     onclick="sw('remind',this)">Reminder</div>
+</div>
+
+<div class="stage">
+<div class="frame">
+<div class="phone">
+
+<div class="sb">
+  <span class="sb-t" id="ck">9:41</span>
+  <div class="sb-r"><div class="sb-w"></div><div class="sb-s"></div><div class="sb-b"></div></div>
+</div>
+
+<!-- ══ GROUP INFO ══ -->
+<div class="pv on" id="pv-group">
+  <div class="brow">
+    <div class="bk"><div class="bkc"></div></div>
+    <span style="font-size:13px;font-weight:700;color:var(--tx);flex:1">Team Dev</span>
+    <svg width="14" height="4" viewBox="0 0 14 4"><circle cx="2" cy="2" r="1.4" fill="#C9A84C"/><circle cx="7" cy="2" r="1.4" fill="#C9A84C"/><circle cx="12" cy="2" r="1.4" fill="#C9A84C"/></svg>
+  </div>
+  <div class="gi-hero">
+    <div class="gi-av"><div class="gi-avd"></div></div>
+    <div class="gi-nm">Team Dev</div>
+    <div class="gi-sb">8 thành viên · Nineteen Tech</div>
+    <div class="gi-acts">
+      <div class="gia">
+        <div class="gia-ic"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 11V9a5 5 0 0110 0v2" stroke="#C9A84C" stroke-width="1.5" fill="none" stroke-linecap="round"/><circle cx="7" cy="4" r="2.5" stroke="#C9A84C" stroke-width="1.5" fill="none"/><line x1="10.5" y1="1.5" x2="10.5" y2="5.5" stroke="#C9A84C" stroke-width="1.5" stroke-linecap="round"/><line x1="8.5" y1="3.5" x2="12.5" y2="3.5" stroke="#C9A84C" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <span class="gia-l">Thêm</span>
+      </div>
+      <div class="gia">
+        <div class="gia-ic"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M7 1L8.5 5h4l-3.2 2.3 1.2 4L7 9 3.5 11.3l1.2-4L1.5 5h4z" stroke="#C9A84C" stroke-width="1.2" fill="none" stroke-linejoin="round"/></svg></div>
+        <span class="gia-l">Ghim</span>
+      </div>
+      <div class="gia">
+        <div class="gia-ic"><svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" stroke="#C9A84C" stroke-width="1.5" fill="none"/><line x1="7" y1="4.5" x2="7" y2="7" stroke="#C9A84C" stroke-width="1.5" stroke-linecap="round"/><circle cx="7" cy="9" r=".9" fill="#C9A84C"/></svg></div>
+        <span class="gia-l">Thông tin</span>
+      </div>
+      <div class="gia">
+        <div class="gia-ic" style="border-color:rgba(231,76,60,.25);background:rgba(231,76,60,.08)"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M11 3L3 11M3 3l8 8" stroke="#E74C3C" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <span class="gia-l" style="color:#E74C3C">Rời</span>
+      </div>
+    </div>
+  </div>
+  <div class="sp">
+    <div class="gi-st">Thành viên (8)</div>
+    <div class="gmb">
+      <div class="gmav on" style="background:var(--g)">NT</div>
+      <div class="gmi"><div class="gmn">Nguyễn Thành</div><div class="gmr">Senior Developer</div></div>
+      <span class="badge b-y">Bạn</span>
+    </div>
+    <div class="gmb">
+      <div class="gmav on" style="background:var(--g)">TN</div>
+      <div class="gmi"><div class="gmn">Trần Ngọc</div><div class="gmr">Backend Dev</div></div>
+      <span class="badge b-a">Admin</span>
+    </div>
+    <div class="gmb">
+      <div class="gmav" style="background:#E74C3C">LH</div>
+      <div class="gmi"><div class="gmn">Lê Hương</div><div class="gmr">UI/UX Designer</div></div>
+    </div>
+    <div class="gmb">
+      <div class="gmav on" style="background:#5DCAA5">PT</div>
+      <div class="gmi"><div class="gmn">Phạm Tuấn</div><div class="gmr">Frontend Dev</div></div>
+    </div>
+    <div class="gmb">
+      <div class="gmav" style="background:#3B8BDB">MV</div>
+      <div class="gmi"><div class="gmn">Mai Việt</div><div class="gmr">DevOps</div></div>
+    </div>
+    <div class="gi-st" style="margin-top:12px">Ảnh & File gần đây</div>
+    <div class="mg">
+      <div class="mgt">🖼</div><div class="mgt">📄</div><div class="mgt">🎥</div>
+      <div class="mgt">🖼</div><div class="mgt">📊</div><div class="mgt">📄</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ VOICE CALL ══ -->
+<div class="pv" id="pv-call" style="position:relative">
+  <div class="vc-bg"></div>
+  <div class="vc-grid"></div>
+  <div class="sb" style="position:relative;z-index:2">
+    <span class="sb-t">9:41</span>
+    <div class="sb-r"><div class="sb-w"></div><div class="sb-b"></div></div>
+  </div>
+  <div class="vc-body">
+    <div class="ring-wrap">
+      <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+      <div class="cav">TN</div>
+    </div>
+    <div class="cnm">Trần Ngọc</div>
+    <div class="cst">Đang gọi</div>
+    <div class="ctm" id="tm">02:47</div>
+    <div class="wv" id="wv"></div>
+    <div class="cbts">
+      <div class="cb">
+        <div class="cb-ic s"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M9 2a3.5 3.5 0 013.5 3.5v3a3.5 3.5 0 01-7 0V5.5A3.5 3.5 0 019 2z" stroke="#C9A84C" stroke-width="1.5" fill="none"/><path d="M4.5 9a4.5 4.5 0 009 0M9 13.5V16" stroke="#C9A84C" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div>
+        <span class="cb-l">Mic</span>
+      </div>
+      <div class="cb">
+        <div class="cb-ic s"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M1.5 5.5h11a2 2 0 012 2v5a2 2 0 01-2 2H4a2 2 0 01-2-2V7a2 2 0 012-2z" stroke="#C9A84C" stroke-width="1.5" fill="none"/><path d="M14.5 8l3-1.5v5l-3-1.5" stroke="#C9A84C" stroke-width="1.5" fill="none" stroke-linejoin="round"/></svg></div>
+        <span class="cb-l">Video</span>
+      </div>
+      <div class="cb">
+        <div class="cb-ic e"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.27-.27.67-.36 1-.22 1.1.37 2.28.57 3.6.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1C10.57 21 3 13.43 3 4c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.32.2 2.5.57 3.6.11.32.03.7-.22.97L6.6 10.8z" fill="white"/></svg></div>
+        <span class="cb-l" style="color:var(--rd)">Kết thúc</span>
+      </div>
+      <div class="cb">
+        <div class="cb-ic a"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M2 5.5C2 4.12 3.12 3 4.5 3h9C14.88 3 16 4.12 16 5.5v5c0 1.38-1.12 2.5-2.5 2.5H9l-4 3v-3H4.5C3.12 11 2 9.88 2 8.5v-3z" stroke="#C9A84C" stroke-width="1.5" fill="none"/></svg></div>
+        <span class="cb-l">Chat</span>
+      </div>
+      <div class="cb">
+        <div class="cb-ic s"><svg width="18" height="18" viewBox="0 0 18 18"><line x1="9" y1="3" x2="9" y2="15" stroke="#C9A84C" stroke-width="1.5" stroke-linecap="round"/><line x1="3" y1="9" x2="15" y2="9" stroke="#C9A84C" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <span class="cb-l">Thêm</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ VIDEO CALL ══ -->
+<div class="pv" id="pv-video">
+  <div class="vid-area">
+    <div class="vid-main-av">
+      <div style="width:68px;height:68px;border-radius:50%;background:var(--g);display:flex;align-items:center;justify-content:center;font-size:21px;font-weight:800;color:var(--k)">TN</div>
+      <span style="font-size:12px;color:var(--tx2);margin-top:6px">Trần Ngọc</span>
+    </div>
+    <div class="vid-self"><div class="vid-self-av">NT</div></div>
+    <div class="vid-ntag">Trần Ngọc</div>
+    <div class="vid-top">
+      <div style="display:flex;align-items:center;gap:6px">
+        <div style="width:6px;height:6px;border-radius:50%;background:var(--rd);animation:rp 1s infinite"></div>
+        <span class="vid-t">04:12</span>
+      </div>
+      <span class="vid-q">HD · Agora</span>
+    </div>
+  </div>
+  <div class="vid-ctrls">
+    <div class="vct"><div class="vct-ic s"><svg width="15" height="15" viewBox="0 0 15 15"><path d="M7.5 1.5a3 3 0 013 3v2.5a3 3 0 01-6 0V4.5a3 3 0 013-3z" stroke="#C9A84C" stroke-width="1.4" fill="none"/><path d="M3.5 7.5a4 4 0 008 0M7.5 11.5v2" stroke="#C9A84C" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg></div><span class="vct-l">Mic</span></div>
+    <div class="vct"><div class="vct-ic s"><svg width="15" height="15" viewBox="0 0 15 15"><rect x="1.5" y="3" width="8.5" height="9" rx="2" stroke="#C9A84C" stroke-width="1.4" fill="none"/><path d="M10 6l3.5-1.5v5.5L10 8.5" stroke="#C9A84C" stroke-width="1.4" fill="none" stroke-linejoin="round"/></svg></div><span class="vct-l">Cam</span></div>
+    <div class="vct"><div class="vct-ic e"><svg width="18" height="18" viewBox="0 0 18 18"><path d="M5 8.1c1.05 2.1 2.85 3.83 4.95 4.95l1.65-1.65c.23-.23.52-.3.75-.15.83.3 1.73.45 2.7.45.45 0 .75.3.75.75V15c0 .45-.3.75-.75.75C7.6 15.75 2.25 10.4 2.25 3.75 2.25 3.3 2.55 3 3 3h2.63c.45 0 .75.3.75.75 0 .98.15 1.88.45 2.7.08.23 0 .53-.15.75L5 8.1z" fill="white"/></svg></div><span class="vct-l" style="color:var(--rd)">Kết thúc</span></div>
+    <div class="vct"><div class="vct-ic a"><svg width="15" height="15" viewBox="0 0 15 15"><path d="M1.5 4.5C1.5 3.4 2.4 2.5 3.5 2.5h8c1.1 0 2 .9 2 2v4.5c0 1.1-.9 2-2 2H7.5l-3.5 2.5V11H3.5c-1.1 0-2-.9-2-2V4.5z" stroke="#C9A84C" stroke-width="1.4" fill="none"/></svg></div><span class="vct-l">Chat</span></div>
+    <div class="vct"><div class="vct-ic s"><svg width="15" height="15" viewBox="0 0 15 15"><circle cx="3" cy="7.5" r="1.2" fill="#C9A84C"/><circle cx="7.5" cy="7.5" r="1.2" fill="#C9A84C"/><circle cx="12" cy="7.5" r="1.2" fill="#C9A84C"/></svg></div><span class="vct-l">Thêm</span></div>
+  </div>
+</div>
+
+<!-- ══ TASKS ══ -->
+<div class="pv" id="pv-task" style="position:relative">
+  <div class="tk-hdr">
+    <div class="tk-ttl">
+      <div style="width:20px;height:20px;background:var(--gb);border:1px solid var(--gbd2);border-radius:6px;display:flex;align-items:center;justify-content:center"><div class="ld"></div></div>
+      Tasks
+    </div>
+    <div class="tk-sb">Sprint 3 · 20/3 – 3/4/2025</div>
+  </div>
+  <div class="tk-tabs">
+    <div class="tkt on">Tất cả</div>
+    <div class="tkt">Đang làm</div>
+    <div class="tkt">Xong</div>
+    <div class="tkt">AI Log</div>
+  </div>
+  <div class="tklist">
+    <div class="tglbl"><div class="tgd" style="background:#E2A030"></div>In Progress</div>
+    <div class="tcard">
+      <div class="tc-top"><div class="tc-chk"></div><div class="tc-ttl">Implement WebSocket chat gateway NestJS</div></div>
+      <div class="tc-meta"><span class="tpl tp-f">Feature</span><span class="tdue">20/3</span></div>
+      <div class="tc-prog"><div class="tp-bg"><div class="tp-fill" style="width:65%"></div></div><div class="tp-pct">65%</div></div>
+      <div class="tc-avs"><div class="tca" style="background:var(--g)">NT</div><div class="tca" style="background:#5DCAA5">PT</div></div>
+    </div>
+    <div class="tcard">
+      <div class="tc-top"><div class="tc-chk"></div><div class="tc-ttl">Tối ưu query messages — partition PostgreSQL</div></div>
+      <div class="tc-meta"><span class="tpl tp-b">Bug</span><span class="tdue lt">18/3 !</span></div>
+      <div class="tc-prog"><div class="tp-bg"><div class="tp-fill" style="width:30%"></div></div><div class="tp-pct">30%</div></div>
+      <div class="tc-avs"><div class="tca" style="background:var(--g)">NT</div></div>
+    </div>
+    <div class="tglbl" style="margin-top:6px"><div class="tgd" style="background:var(--gr)"></div>Done</div>
+    <div class="tcard" style="opacity:.55">
+      <div class="tc-top"><div class="tc-chk dn"><div class="chkm"></div></div><div class="tc-ttl dn">Setup Odoo SSO authentication flow</div></div>
+      <div class="tc-meta"><span class="tpl tp-f">Feature</span><span class="tdue">15/3</span></div>
+      <div class="tc-avs"><div class="tca" style="background:var(--g)">NT</div><div class="tca" style="background:var(--g)">TN</div></div>
+    </div>
+    <div class="tcard" style="opacity:.55">
+      <div class="tc-top"><div class="tc-chk dn"><div class="chkm"></div></div><div class="tc-ttl dn">Viết API docs Swagger cho auth module</div></div>
+      <div class="tc-meta"><span class="tpl tp-d">Docs</span><span class="tdue">14/3</span></div>
+    </div>
+  </div>
+  <div class="ai-fab" id="fab" onclick="tog()"><span>✦</span></div>
+  <div class="ai-sht" id="sht" style="display:none">
+    <div class="ai-hdl"></div>
+    <div class="ai-ttl"><span style="font-size:14px">✦</span> AI Log Task</div>
+    <div class="ai-inp">"Hôm nay fix bug query partition message, khoảng 3 tiếng, xong phần index rồi"</div>
+    <div class="ai-prev">
+      <div class="ai-pl">✦ AI phân tích</div>
+      <div class="ai-pr"><span class="ai-pk">Task</span><span>Fix query partition messages</span></div>
+      <div class="ai-pr"><span class="ai-pk">Thời gian</span><span style="color:var(--g2)">3h 00m</span></div>
+      <div class="ai-pr"><span class="ai-pk">Trạng thái</span><span style="color:var(--gr)">In Progress → 80%</span></div>
+    </div>
+    <div class="ai-acts">
+      <div class="ai-bt x" onclick="tog()">Huỷ</div>
+      <div class="ai-bt c" onclick="tog()">Xác nhận · Sync Odoo</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ REMINDER ══ -->
+<div class="pv" id="pv-remind">
+  <div class="rm-hdr">
+    <div class="rm-ttl">
+      Nhắc nhở
+      <div class="rm-add"><svg width="12" height="12" viewBox="0 0 12 12"><line x1="6" y1="2" x2="6" y2="10" stroke="#C9A84C" stroke-width="1.5" stroke-linecap="round"/><line x1="2" y1="6" x2="10" y2="6" stroke="#C9A84C" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+    </div>
+    <div class="rm-sb">Chủ nhật, 15 tháng 3 · 3 nhắc hôm nay</div>
+  </div>
+  <div class="sp">
+    <div class="rm-sec">Hôm nay</div>
+
+    <div class="rcard dn">
+      <span class="rtm">8:00</span>
+      <div class="ri">
+        <div class="rttl">Checkin — bắt đầu ca làm</div>
+        <div class="rsb">Đừng quên check GPS location</div>
+        <span class="rtag rt-hr">HR</span>
+      </div>
+      <div class="rchk dn"><svg width="8" height="6" viewBox="0 0 8 6"><path d="M1 3l2 2 4-4" stroke="#0A0A0A" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    </div>
+
+    <div class="rcard bl">
+      <span class="rtm">9:30</span>
+      <div class="ri">
+        <div class="rttl">Standup Team Dev</div>
+        <div class="rsb">Google Meet · 15 phút</div>
+        <span class="rtag rt-mt">Meeting</span>
+      </div>
+      <div class="rchk"></div>
+    </div>
+
+    <div class="rcard bl">
+      <span class="rtm">14:00</span>
+      <div class="ri">
+        <div class="rttl">Demo Sprint 3</div>
+        <div class="rsb">Phòng họp tầng 3 · Cả team</div>
+        <span class="rtag rt-mt">Meeting</span>
+      </div>
+      <div class="rchk"></div>
+    </div>
+
+    <div class="rcard">
+      <span class="rtm">17:00</span>
+      <div class="ri">
+        <div class="rttl">Review PR: feature/auth</div>
+        <div class="rsb">Trần Ngọc đang chờ review</div>
+        <span class="rtag rt-tk">Task</span>
+      </div>
+      <div class="rchk"></div>
+    </div>
+
+    <div class="rcard rd">
+      <span class="rtm">18:00</span>
+      <div class="ri">
+        <div class="rttl">Checkout &amp; log OT</div>
+        <div class="rsb">Hôm nay tăng ca 1.5h</div>
+        <span class="rtag rt-ot">OT ×1.5</span>
+      </div>
+      <div class="rchk"></div>
+    </div>
+
+    <div class="rm-sec">Sắp tới</div>
+
+    <div class="rcard" style="opacity:.55">
+      <span class="rtm" style="font-size:9px;width:38px">T2 9:00</span>
+      <div class="ri"><div class="rttl">Sprint Planning · tuần mới</div><span class="rtag rt-mt">Meeting</span></div>
+    </div>
+    <div class="rcard" style="opacity:.55">
+      <span class="rtm" style="font-size:9px;width:38px">T3 15:00</span>
+      <div class="ri"><div class="rttl">1:1 với PM — review OKR</div><span class="rtag rt-mt">Meeting</span></div>
+    </div>
+    <div class="rcard" style="opacity:.55">
+      <span class="rtm" style="font-size:9px;width:38px">31/3</span>
+      <div class="ri"><div class="rttl">Kỳ lương kết thúc</div><span class="rtag rt-hr">HR</span></div>
+    </div>
+  </div>
+
+  <div class="bnav">
+    <div class="bni"><svg width="18" height="14" viewBox="0 0 18 14"><rect y="0" width="18" height="2.5" rx="1.25" fill="#5A5648"/><rect y="5.5" width="14" height="2.5" rx="1.25" fill="#5A5648"/><rect y="11" width="10" height="2.5" rx="1.25" fill="#5A5648"/></svg><span class="bni-l">Chat</span></div>
+    <div class="bni"><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="5.5" r="3" stroke="#5A5648" stroke-width="1.5" fill="none"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="#5A5648" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg><span class="bni-l">HR</span></div>
+    <div class="bni"><svg width="16" height="16" viewBox="0 0 16 16"><rect x="1" y="1" width="14" height="14" rx="3" stroke="#5A5648" stroke-width="1.5" fill="none"/><line x1="4" y1="5.5" x2="12" y2="5.5" stroke="#5A5648" stroke-width="1.5" stroke-linecap="round"/><line x1="4" y1="8.5" x2="10" y2="8.5" stroke="#5A5648" stroke-width="1.5" stroke-linecap="round"/><line x1="4" y1="11" x2="7" y2="11" stroke="#5A5648" stroke-width="1.5" stroke-linecap="round"/></svg><span class="bni-l">Tasks</span></div>
+    <div class="bni on"><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5" stroke="#C9A84C" stroke-width="1.5" fill="none"/><line x1="8" y1="5" x2="8" y2="8.5" stroke="#C9A84C" stroke-width="1.5" stroke-linecap="round"/><line x1="8" y1="8.5" x2="10.5" y2="10" stroke="#C9A84C" stroke-width="1.5" stroke-linecap="round"/></svg><span class="bni-l">Reminder</span></div>
+  </div>
+</div>
+
+</div></div></div>
+</div>
+
+<script>
+function sw(id,el){
+  document.querySelectorAll('.pv').forEach(v=>v.classList.remove('on'));
+  var t=document.getElementById('pv-'+id);
+  if(t)t.classList.add('on');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  if(el)el.classList.add('on');
+  if(id==='call')startT(); else stopT();
+}
+
+var ti=null,ts=167;
+function startT(){
+  stopT();
+  ti=setInterval(function(){
+    ts++;
+    var m=Math.floor(ts/60),s=ts%60;
+    var el=document.getElementById('tm');
+    if(el)el.textContent=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+  },1000);
+}
+function stopT(){if(ti){clearInterval(ti);ti=null;}}
+
+var wh=[4,7,12,9,6,14,10,16,8,11,15,7,9,13,6,10,14,8,5,11,9,7,12];
+var wvEl=document.getElementById('wv');
+if(wvEl){
+  wh.forEach(function(h,i){
+    var b=document.createElement('div');
+    b.className='wvb';
+    b.style.setProperty('--h',h+'px');
+    b.style.setProperty('--d',(0.5+Math.random()*0.7).toFixed(2)+'s');
+    b.style.animationDelay=(i*38)+'ms';
+    wvEl.appendChild(b);
+  });
+}
+
+function tog(){
+  var s=document.getElementById('sht');
+  var f=document.getElementById('fab');
+  if(!s)return;
+  var show=s.style.display==='none'||s.style.display==='';
+  s.style.display=show?'block':'none';
+  if(f)f.style.display=show?'none':'flex';
+}
+
+var ckEl=document.getElementById('ck');
+function tick(){
+  if(!ckEl)return;
+  var n=new Date();
+  ckEl.textContent=n.getHours()+':'+(n.getMinutes()<10?'0':'')+n.getMinutes();
+}
+tick();
+setInterval(tick,15000);
+</script>

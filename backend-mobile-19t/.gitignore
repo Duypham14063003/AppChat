@@ -1,0 +1,12 @@
+
+# auto render for base code
+# Ignore .env file which contains sensitive information
+.env
+node_modules/
+.claude/
+openspec/
+dist/
+
+exports/
+
+relenote_format.txt

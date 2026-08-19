@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  postgres-test:
+    image: postgres:17-alpine
+    container_name: 19t-postgres-test
+    environment:
+      POSTGRES_USER: app_19t_test
+      POSTGRES_PASSWORD: test_password
+      POSTGRES_DB: app_19t_test
+    ports:
+      - '5434:5432'
+    volumes:
+      - postgres-test-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U app_19t_test']
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  redis-test:
+    image: redis:7-alpine
+    container_name: 19t-redis-test
+    ports:
+      - '6380:6379'
+    volumes:
+      - redis-test-data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  postgres-test-data:
+  redis-test-data:

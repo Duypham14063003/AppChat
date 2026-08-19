@@ -1,0 +1,413 @@
+{
+  "info": {
+    "name": "Bot API Collection (Updated)",
+    "description": "API Collection đầy đủ để test Bot API - bao gồm gửi, xem, sửa, xóa tin nhắn",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.1.0"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3002",
+      "type": "string"
+    },
+    {
+      "key": "bot_id",
+      "value": "12345678-1234-1234-1234-123456789012",
+      "type": "string"
+    },
+    {
+      "key": "conversation_id",
+      "value": "87654321-4321-4321-4321-210987654321",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "11111111-1111-1111-1111-111111111111",
+      "type": "string"
+    },
+    {
+      "key": "message_id",
+      "value": "message-uuid-here",
+      "type": "string"
+    },
+    {
+      "key": "admin_token",
+      "value": "your-admin-jwt-token",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Public API - Bot Messages",
+      "item": [
+        {
+          "name": "1. Send Message to Conversation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bot_id\": \"{{bot_id}}\",\n  \"conversation_id\": \"{{conversation_id}}\",\n  \"content\": \"Hello from Postman! This is a test message.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/bot/messages",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "bot", "messages"]
+            },
+            "description": "Gửi tin nhắn vào một cuộc hội thoại/nhóm có sẵn. Lưu message_id từ response để test update/delete."
+          },
+          "response": []
+        },
+        {
+          "name": "2. Send Direct Message to User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bot_id\": \"{{bot_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"content\": \"This is a direct message from bot!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/bot/messages",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "bot", "messages"]
+            },
+            "description": "Gửi tin nhắn riêng (DM) đến một user. Hệ thống tự động tạo conversation nếu chưa có."
+          },
+          "response": []
+        },
+        {
+          "name": "3. Send Message with Metadata",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bot_id\": \"{{bot_id}}\",\n  \"conversation_id\": \"{{conversation_id}}\",\n  \"content\": \"Order #12345 has been confirmed!\",\n  \"external_message_id\": \"order-12345-confirmed\",\n  \"metadata\": {\n    \"order_id\": \"12345\",\n    \"status\": \"confirmed\",\n    \"amount\": 150000,\n    \"source\": \"order-system\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/bot/messages",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "bot", "messages"]
+            },
+            "description": "Gửi tin nhắn với metadata bổ sung và external_message_id để đảm bảo idempotency"
+          },
+          "response": []
+        },
+        {
+          "name": "4. Get Bot Messages (All)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/bot/messages?bot_id={{bot_id}}&page=1&limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "bot", "messages"],
+              "query": [
+                {
+                  "key": "bot_id",
+                  "value": "{{bot_id}}",
+                  "description": "ID của bot"
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Số trang (bắt đầu từ 1)"
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Số tin nhắn mỗi trang (max 100)"
+                }
+              ]
+            },
+            "description": "Lấy tất cả tin nhắn đã gửi bởi bot (có phân trang)"
+          },
+          "response": []
+        },
+        {
+          "name": "5. Get Bot Messages (By Conversation)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/bot/messages?bot_id={{bot_id}}&conversation_id={{conversation_id}}&page=1&limit=50",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "bot", "messages"],
+              "query": [
+                {
+                  "key": "bot_id",
+                  "value": "{{bot_id}}"
+                },
+                {
+                  "key": "conversation_id",
+                  "value": "{{conversation_id}}",
+                  "description": "Lọc theo conversation"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            },
+            "description": "Lấy tin nhắn của bot trong một conversation cụ thể"
+          },
+          "response": []
+        },
+        {
+          "name": "6. Update Bot Message",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bot_id\": \"{{bot_id}}\",\n  \"message_id\": \"{{message_id}}\",\n  \"content\": \"Updated message content - fixed typo\",\n  \"metadata\": {\n    \"edited_reason\": \"typo fix\",\n    \"edited_by\": \"system\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/bot/messages",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "bot", "messages"]
+            },
+            "description": "Cập nhật nội dung tin nhắn đã gửi. Lưu ý: Cần set {{message_id}} variable trước khi test"
+          },
+          "response": []
+        },
+        {
+          "name": "7. Delete Bot Message",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bot_id\": \"{{bot_id}}\",\n  \"message_id\": \"{{message_id}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/bot/messages",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "bot", "messages"]
+            },
+            "description": "Xóa tin nhắn (soft delete). Tin nhắn đã xóa không thể sửa hoặc xóa lại"
+          },
+          "response": []
+        },
+        {
+          "name": "ERROR: Missing Both Targets",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bot_id\": \"{{bot_id}}\",\n  \"content\": \"This will fail - missing both conversation_id and user_id\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/bot/messages",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "bot", "messages"]
+            },
+            "description": "Test case: Sẽ trả về lỗi 400 vì thiếu cả conversation_id và user_id"
+          },
+          "response": []
+        },
+        {
+          "name": "ERROR: Both Targets Provided",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bot_id\": \"{{bot_id}}\",\n  \"conversation_id\": \"{{conversation_id}}\",\n  \"user_id\": \"{{user_id}}\",\n  \"content\": \"This will fail - both targets provided\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/bot/messages",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "bot", "messages"]
+            },
+            "description": "Test case: Sẽ trả về lỗi 400 vì cung cấp cả conversation_id và user_id"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin API - Bot Management",
+      "item": [
+        {
+          "name": "Create Bot",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Bot\",\n  \"email\": \"bot-test-{{$timestamp}}@system.local\",\n  \"description\": \"Bot for testing purposes\",\n  \"avatar_url\": \"https://example.com/bot-avatar.png\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/bots",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "bots"]
+            },
+            "description": "Tạo bot mới (chỉ admin). Lưu ý: email phải theo format bot-*@system.local"
+          },
+          "response": []
+        },
+        {
+          "name": "List All Bots",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/bots",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "bots"]
+            },
+            "description": "Lấy danh sách tất cả bots (chỉ admin)"
+          },
+          "response": []
+        },
+        {
+          "name": "List Bots (Include Inactive)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/bots?include_inactive=true",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "bots"],
+              "query": [
+                {
+                  "key": "include_inactive",
+                  "value": "true"
+                }
+              ]
+            },
+            "description": "Lấy danh sách tất cả bots bao gồm cả những bot đã bị deactivate"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Bot Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/bots/{{bot_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "bots", "{{bot_id}}"]
+            },
+            "description": "Lấy thông tin chi tiết của một bot (chỉ admin)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Bot",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Bot Name\",\n  \"description\": \"Updated description for the bot\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/bots/{{bot_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "bots", "{{bot_id}}"]
+            },
+            "description": "Cập nhật thông tin bot (chỉ admin). Lưu ý: Không thể update system bot"
+          },
+          "response": []
+        },
+        {
+          "name": "Deactivate Bot",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/bots/{{bot_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "bots", "{{bot_id}}"]
+            },
+            "description": "Vô hiệu hóa bot (chỉ admin). Bot sẽ không thể gửi tin nhắn nữa. Lưu ý: Không thể deactivate system bot"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

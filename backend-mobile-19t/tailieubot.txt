@@ -1,0 +1,195 @@
+### Admin APIs (Internal - Requires JWT + Admin Role)
+
+#### 1. Create Bot
+
+```http
+POST /api/v1/bots
+Authorization: Bearer <admin-jwt>
+Content-Type: application/json
+
+{
+  "name": "Notification Bot",
+  "email": "bot-notifications@system.local",
+  "description": "Sends notifications from external systems",
+  "avatar_url": "https://example.com/bot-avatar.png"
+}
+```
+
+**Email Pattern**: Must match `bot-[a-z0-9-]+@system.local`
+
+**Response**:
+```json
+{
+  "id": "uuid",
+  "odoo_uid": -1,
+  "email": "bot-notifications@system.local",
+  "name": "Notification Bot",
+  "is_bot": true,
+  "bot_description": "Sends notifications from external systems",
+  "bot_created_by": "admin-user-id",
+  "is_active": true,
+  "created_at": "2024-05-26T10:30:00Z"
+}
+```
+
+#### 2. List Bots
+
+```http
+GET /api/v1/bots?include_inactive=false
+Authorization: Bearer <admin-jwt>
+```
+
+**Response**:
+```json
+{
+  "bots": [
+    {
+      "id": "uuid",
+      "name": "Notification Bot",
+      "email": "bot-notifications@system.local",
+      "is_active": true,
+      ...
+    }
+  ]
+}
+```
+
+#### 3. Get Bot Details
+
+```http
+GET /api/v1/bots/:id
+Authorization: Bearer <admin-jwt>
+```
+
+#### 4. Update Bot
+
+```http
+PATCH /api/v1/bots/:id
+Authorization: Bearer <admin-jwt>
+Content-Type: application/json
+
+{
+  "name": "Updated Bot Name",
+  "description": "Updated description",
+  "avatar_url": "https://example.com/new-avatar.png"
+}
+```
+
+**Note**: System bot (`00000000-0000-0000-0000-000000000001`) cannot be updated.
+
+#### 5. Deactivate Bot
+
+```http
+DELETE /api/v1/bots/:id
+Authorization: Bearer <admin-jwt>
+```
+
+**Response**: 204 No Content
+
+**Note**: System bot cannot be deactivated.
+
+---
+
+### External API (Public - No Authentication)
+
+#### Send Bot Message
+
+```http
+POST /api/v1/bot/messages
+Content-Type: application/json
+
+{
+  "bot_id": "uuid",
+  "conversation_id": "uuid",  // OR user_id (not both)
+  "content": "Message text",
+  "external_message_id": "uuid",  // Optional, for idempotency
+  "metadata": {}  // Optional
+}
+```
+
+**Rate Limit**: 100 requests per minute
+
+**Send to Group Conversation**:
+```json
+{
+  "bot_id": "12345678-1234-1234-1234-123456789012",
+  "conversation_id": "87654321-4321-4321-4321-210987654321",
+  "content": "Hello from bot!"
+}
+```
+## 3️⃣ Sửa Tin Nhắn
+
+**Endpoint:** `PATCH /bot/messages`
+
+**Mô tả:** Cập nhật nội dung tin nhắn đã gửi
+
+### Request Body
+
+```json
+{
+  "bot_id": "uuid-của-bot",
+  "message_id": "uuid-của-message",
+  "content": "Nội dung mới",
+  "metadata": {
+    "edited_reason": "fix typo"
+  }
+}
+```
+
+### Response (200 OK)
+```json
+{
+  "success": true,
+  "message_id": "uuid",
+  "content": "Nội dung mới",
+  "metadata": { "edited_reason": "fix typo" },
+  "edited_at": "2024-05-26T11:00:00.000Z"
+}
+```
+
+## 2️⃣ Xem Lịch Sử Tin Nhắn
+
+**Endpoint:** `GET /bot/messages`
+
+**Mô tả:** Lấy danh sách tin nhắn đã gửi (có phân trang)
+
+### Query Parameters
+
+| Tham số | Type | Bắt buộc | Mô tả |
+|---------|------|----------|-------|
+| `bot_id` | UUID | ✅ | ID của bot |
+| `conversation_id` | UUID | ❌ | Lọc theo conversation |
+| `page` | Number | ❌ | Số trang (mặc định: 1) |
+| `limit` | Number | ❌ | Số tin/trang (mặc định: 20, max: 100) |
+
+### Response (200 OK)
+```json
+{
+  "messages": [
+    {
+      "id": "msg-uuid-1",
+      "conversation_id": "conv-uuid",
+      "content": "Hello from bot!",
+      "type": "text",
+      "metadata": { "source": "webhook" },
+      "created_at": "2024-05-26T10:30:00.000Z",
+      "edited_at": null
+    },
+    {
+      "id": "msg-uuid-2",
+      "conversation_id": "conv-uuid",
+      "content": "Updated message",
+      "type": "text",
+      "metadata": null,
+      "created_at": "2024-05-26T10:25:00.000Z",
+      "edited_at": "2024-05-26T10:26:00.000Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "total": 45,
+    "total_pages": 3
+  }
+}
+```

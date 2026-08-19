@@ -1,0 +1,719 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#0A0A0A;
+  --black2:#111114;
+  --black3:#18181C;
+  --black4:#1F1F26;
+  --black5:#28282F;
+  --gold:#C9A84C;
+  --gold2:#E2C06A;
+  --gold3:#A8843A;
+  --gold-light:#F5E4A8;
+  --gold-bg:rgba(201,168,76,0.10);
+  --gold-border:rgba(201,168,76,0.22);
+  --gold-border2:rgba(201,168,76,0.38);
+  --text:#F2EDD8;
+  --text2:#9E9880;
+  --text3:#5A5648;
+  --white:#FFFFFF;
+  --green:#2ECC71;
+  --red:#E74C3C;
+  --border:rgba(255,255,255,0.06);
+  --border2:rgba(255,255,255,0.10);
+  --font:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+
+body{font-family:var(--font);background:transparent;color:var(--text)}
+
+.wrap{display:flex;flex-direction:column;gap:0;padding:12px 0 24px}
+
+/* TOP TABS */
+.tabs{display:flex;gap:0;background:var(--black3);border-radius:12px;padding:4px;margin-bottom:20px;border:1px solid var(--gold-border)}
+.tab{flex:1;padding:8px 6px;border-radius:8px;font-size:11px;font-weight:600;text-align:center;cursor:pointer;color:var(--text2);transition:all .2s;letter-spacing:.02em}
+.tab.active{background:var(--gold);color:#0A0A0A}
+.tab:hover:not(.active){color:var(--text)}
+
+/* SCREENS CONTAINER */
+.screens{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;justify-content:center}
+
+/* PHONE FRAME */
+.phone-frame{
+  background:var(--black2);
+  border-radius:40px;
+  padding:4px;
+  border:1.5px solid var(--gold-border2);
+  box-shadow:0 0 40px rgba(201,168,76,.12), 0 32px 80px rgba(0,0,0,.7);
+  flex-shrink:0;
+  position:relative;
+}
+.phone-frame::before{
+  content:'';position:absolute;top:4px;left:50%;transform:translateX(-50%);
+  width:80px;height:5px;background:var(--black5);border-radius:3px;z-index:10;
+}
+.phone{
+  width:260px;height:550px;
+  background:var(--black);border-radius:36px;
+  overflow:hidden;display:flex;flex-direction:column;
+  position:relative;
+}
+
+/* STATUS BAR */
+.sbar{display:flex;justify-content:space-between;align-items:center;padding:14px 18px 6px;flex-shrink:0}
+.sbar-time{font-size:12px;font-weight:700;color:var(--text);letter-spacing:.02em}
+.sbar-right{display:flex;gap:4px;align-items:center}
+.sb-el{width:12px;height:7px;border-radius:1.5px;background:var(--text2);opacity:.7}
+.sb-wifi{width:11px;height:8px;border-top:2px solid var(--text2);border-radius:50% 50% 0 0;opacity:.7}
+.sb-batt{width:18px;height:9px;border-radius:2px;border:1.5px solid var(--text2);opacity:.7;position:relative}
+.sb-batt::before{content:'';position:absolute;left:2px;top:1px;width:55%;height:5px;background:var(--green);border-radius:1px}
+.sb-batt::after{content:'';position:absolute;right:-4px;top:50%;transform:translateY(-50%);width:2.5px;height:4px;background:var(--text2);border-radius:0 1px 1px 0}
+
+/* SCREEN VIEWS */
+.sv{display:none;flex-direction:column;flex:1;overflow:hidden}
+.sv.on{display:flex}
+
+/* LOGO HEADER */
+.logo-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:4px 16px 12px;flex-shrink:0;
+}
+.logo-mark{
+  display:flex;align-items:center;gap:8px;
+}
+.logo-icon{
+  width:28px;height:28px;
+  background:var(--gold-bg);border:1px solid var(--gold-border2);
+  border-radius:8px;display:flex;align-items:center;justify-content:center;
+}
+.logo-diamond{
+  width:13px;height:13px;
+  background:var(--gold);
+  clip-path:polygon(50% 0%,100% 38%,82% 100%,18% 100%,0% 38%);
+}
+.logo-text{font-size:13px;font-weight:700;color:var(--gold);letter-spacing:.04em}
+.logo-sub{font-size:9px;color:var(--text3);letter-spacing:.06em;text-transform:uppercase}
+.hdr-icons{display:flex;gap:8px}
+.hdr-icon{
+  width:30px;height:30px;border-radius:50%;background:var(--black3);
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--gold-border);cursor:pointer;
+}
+.hdr-dot{width:12px;height:12px;border-radius:50%;border:1.5px solid var(--gold3)}
+.hdr-pen{font-size:13px;color:var(--gold3);line-height:1;margin-top:-1px}
+
+/* SEARCH */
+.search{
+  margin:0 12px 10px;background:var(--black3);border-radius:10px;
+  display:flex;align-items:center;gap:8px;padding:7px 12px;
+  border:1px solid var(--gold-border);
+}
+.search-ico{width:12px;height:12px;border-radius:50%;border:1.5px solid var(--text3);position:relative;flex-shrink:0}
+.search-ico::after{content:'';position:absolute;bottom:-4px;right:-4px;width:4px;height:1.5px;background:var(--text3);transform:rotate(45deg);border-radius:1px}
+.search-ph{font-size:12px;color:var(--text3)}
+
+/* FOLDERS */
+.folders{display:flex;gap:6px;padding:0 12px 10px;overflow-x:auto;flex-shrink:0}
+.folders::-webkit-scrollbar{display:none}
+.fchip{padding:4px 10px;border-radius:8px;font-size:10px;font-weight:600;white-space:nowrap;cursor:pointer;flex-shrink:0;letter-spacing:.02em}
+.fchip.fa{background:var(--gold);color:#0A0A0A}
+.fchip:not(.fa){background:var(--black3);color:var(--text2);border:1px solid var(--gold-border)}
+
+/* INBOX LIST */
+.ilist{flex:1;overflow-y:auto;padding:0 8px}
+.ilist::-webkit-scrollbar{display:none}
+.ci{
+  display:flex;align-items:center;gap:10px;padding:9px 8px;
+  border-radius:10px;cursor:pointer;transition:background .15s;
+  border-bottom:1px solid var(--border);
+}
+.ci:last-child{border-bottom:none}
+.ci:hover{background:var(--black3)}
+.ci.pinned{position:relative}
+.ci.pinned::after{content:'';position:absolute;top:12px;right:10px;width:5px;height:5px;border-radius:50%;background:var(--gold);opacity:.7}
+.ava{
+  width:40px;height:40px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:800;color:var(--black);
+  position:relative;border:1px solid rgba(201,168,76,.3);
+}
+.ava.on::after{content:'';position:absolute;bottom:1px;right:1px;width:9px;height:9px;border-radius:50%;background:var(--green);border:2px solid var(--black)}
+.ci-info{flex:1;min-width:0}
+.ci-name{font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.01em}
+.ci-prev{font-size:11px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.ci-meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.ci-time{font-size:10px;color:var(--text3)}
+.ubadge{background:var(--gold);color:#0A0A0A;font-size:9px;font-weight:800;padding:2px 5px;border-radius:8px;min-width:16px;text-align:center}
+
+/* DIVIDER */
+.gold-divider{width:40px;height:2px;background:var(--gold);margin:0 auto;border-radius:1px;opacity:.4;flex-shrink:0}
+
+/* BOTTOM NAV */
+.bnav{
+  display:flex;justify-content:space-around;align-items:center;
+  padding:8px 0 14px;border-top:1px solid var(--gold-border);flex-shrink:0;
+  background:rgba(10,10,10,.95);
+}
+.bni{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:2px 10px;position:relative}
+.bni-dot{position:absolute;top:-1px;right:6px;width:5px;height:5px;border-radius:50%;background:var(--gold)}
+.bni-lbl{font-size:9px;color:var(--text3);font-weight:600;letter-spacing:.04em}
+.bni.active .bni-lbl{color:var(--gold)}
+
+/* CHAT HEADER */
+.chat-hdr{
+  display:flex;align-items:center;gap:8px;padding:4px 10px 10px;
+  border-bottom:1px solid var(--gold-border);flex-shrink:0;
+}
+.back{width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.back-chev{width:7px;height:7px;border-left:2px solid var(--gold3);border-bottom:2px solid var(--gold3);transform:rotate(45deg);margin-left:4px}
+.chat-ava{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--black);position:relative;border:1px solid rgba(201,168,76,.4)}
+.chat-ava.on::after{content:'';position:absolute;bottom:0;right:0;width:8px;height:8px;border-radius:50%;background:var(--green);border:2px solid var(--black)}
+.chat-info{flex:1}.chat-name{font-size:13px;font-weight:700;color:var(--text);letter-spacing:.01em}
+.chat-stat{font-size:10px;color:var(--green)}
+.cact{display:flex;gap:8px}
+.cai{width:28px;height:28px;background:var(--black3);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid var(--gold-border)}
+
+/* PINNED BAR */
+.pin-bar{
+  background:var(--gold-bg);border-bottom:1px solid var(--gold-border);
+  padding:5px 14px;font-size:10px;color:var(--gold2);
+  display:flex;align-items:center;gap:6px;flex-shrink:0;
+}
+.pin-dot{width:6px;height:6px;background:var(--gold);border-radius:50%;flex-shrink:0}
+
+/* MESSAGES */
+.mlist{flex:1;overflow-y:auto;padding:10px 10px;display:flex;flex-direction:column;gap:3px}
+.mlist::-webkit-scrollbar{display:none}
+.dsep{text-align:center;font-size:9px;color:var(--text3);margin:6px 0;letter-spacing:.06em;text-transform:uppercase}
+
+.mrow{display:flex;align-items:flex-end;gap:5px}
+.mrow.s{flex-direction:row-reverse}
+.mava{width:22px;height:22px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:800;color:var(--black)}
+.bwrap{max-width:75%;display:flex;flex-direction:column}
+.mrow.s .bwrap{align-items:flex-end}
+.mrow.r .bwrap{align-items:flex-start}
+.snm{font-size:9px;color:var(--text3);margin-bottom:2px;padding:0 3px;letter-spacing:.02em}
+
+.bbl{
+  padding:7px 11px;border-radius:16px;font-size:12px;line-height:1.45;
+  color:var(--text);position:relative;cursor:pointer;word-break:break-word;
+  transition:transform .1s;
+}
+.bbl:active{transform:scale(.97)}
+.mrow.s .bbl{background:var(--gold);color:#0A0A0A;border-bottom-right-radius:3px;font-weight:500}
+.mrow.r .bbl{background:var(--black3);border-bottom-left-radius:3px;border:1px solid var(--gold-border)}
+
+.rsnip{background:rgba(201,168,76,.12);border-left:2px solid var(--gold);border-radius:6px 6px 0 0;padding:4px 7px;margin-bottom:-2px;font-size:10px;color:var(--text2)}
+.rauth{font-size:9px;color:var(--gold2);font-weight:700;margin-bottom:1px}
+
+.react-row{display:flex;gap:3px;margin-top:3px;flex-wrap:wrap}
+.rchip{background:var(--black3);border:1px solid var(--gold-border);border-radius:8px;padding:2px 6px;font-size:11px;display:flex;align-items:center;gap:2px;cursor:pointer;transition:transform .15s}
+.rchip:hover{transform:scale(1.18)}
+.rn{font-size:9px;color:var(--text2)}
+
+.mmeta{display:flex;align-items:center;gap:3px;margin-top:2px;padding:0 3px}
+.mtime{font-size:9px;color:var(--text3)}
+.ticks{display:flex}
+.tk{width:7px;height:4px;border-right:1.5px solid;border-bottom:1.5px solid;transform:rotate(45deg) scaleX(.6);margin-top:-2px}
+.tk.g{border-color:var(--text3)}.tk.b{border-color:#60AAFF}
+
+/* TYPING */
+.trow{display:flex;align-items:flex-end;gap:5px}
+.tbbl{background:var(--black3);border-radius:16px;border-bottom-left-radius:3px;border:1px solid var(--gold-border);padding:9px 12px;display:flex;gap:4px}
+.tdot{width:5px;height:5px;border-radius:50%;background:var(--gold3);animation:tDot 1.2s ease-in-out infinite}
+.tdot:nth-child(2){animation-delay:.2s}.tdot:nth-child(3){animation-delay:.4s}
+@keyframes tDot{0%,80%,100%{transform:scale(.8);opacity:.4}40%{transform:scale(1.1);opacity:1}}
+
+/* INPUT */
+.cinput{padding:8px 10px;border-top:1px solid var(--gold-border);flex-shrink:0}
+.inrow{display:flex;align-items:center;gap:7px}
+.abtn{width:30px;height:30px;border-radius:50%;background:var(--black3);display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid var(--gold-border);flex-shrink:0}
+.aplus{font-size:16px;color:var(--gold3);line-height:1}
+.ibox{flex:1;background:var(--black3);border-radius:18px;border:1px solid var(--gold-border);padding:7px 12px;font-size:12px;color:var(--text);display:flex;align-items:center}
+.iph{color:var(--text3);font-size:12px}
+.emj{width:22px;height:22px;border-radius:50%;background:var(--black4);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;flex-shrink:0}
+.sbtn{width:34px;height:34px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:transform .15s,background .15s}
+.sbtn:hover{background:var(--gold2);transform:scale(1.08)}
+.sarr{width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:8px solid #0A0A0A;margin-left:2px}
+
+/* VOICE */
+.vbbl{display:flex;align-items:center;gap:7px;padding:7px 10px;background:var(--black3);border-radius:14px;border-bottom-left-radius:3px;border:1px solid var(--gold-border);cursor:pointer;min-width:150px}
+.vplay{width:26px;height:26px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.vtri{width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid #0A0A0A;margin-left:2px}
+.wform{flex:1;display:flex;align-items:center;gap:2px;height:20px}
+.wb{width:2px;border-radius:2px;background:var(--gold3)}
+.vdur{font-size:10px;color:var(--text2)}
+
+/* FILE */
+.fbbl{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--black3);border-radius:12px;border:1px solid var(--gold-border);cursor:pointer;max-width:190px}
+.fic{width:28px;height:34px;background:var(--black4);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid var(--gold-border2)}
+.fext{font-size:7px;font-weight:800;color:var(--gold)}
+.finfo{flex:1;min-width:0}
+.fname{font-size:11px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fsz{font-size:9px;color:var(--text2)}
+
+/* IMG */
+.imgbbl{width:150px;height:90px;background:var(--black3);border-radius:12px;overflow:hidden;cursor:pointer;border:1px solid var(--gold-border);position:relative;display:flex;align-items:center;justify-content:center}
+.img-ph{font-size:24px;opacity:.3}
+
+/* PROFILE SCREEN */
+.prof-head{
+  background:var(--gold-bg);border-bottom:1px solid var(--gold-border);
+  padding:16px;display:flex;flex-direction:column;align-items:center;gap:8px;flex-shrink:0;
+}
+.prof-ava-big{
+  width:64px;height:64px;border-radius:50%;background:var(--gold);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;font-weight:800;color:#0A0A0A;
+  border:2px solid var(--gold2);position:relative;
+}
+.prof-ava-big::after{content:'';position:absolute;bottom:3px;right:3px;width:12px;height:12px;border-radius:50%;background:var(--green);border:2px solid var(--black)}
+.prof-name{font-size:16px;font-weight:800;color:var(--text);letter-spacing:.02em}
+.prof-role{font-size:11px;color:var(--gold2);font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.prof-stats{display:flex;gap:16px;margin-top:4px}
+.pstat{display:flex;flex-direction:column;align-items:center;gap:2px}
+.pstat-val{font-size:15px;font-weight:800;color:var(--gold)}
+.pstat-lbl{font-size:9px;color:var(--text3);letter-spacing:.04em}
+.pstat-div{width:1px;height:30px;background:var(--gold-border);align-self:center}
+
+.prof-list{flex:1;overflow-y:auto;padding:8px}
+.prof-list::-webkit-scrollbar{display:none}
+.prof-item{
+  display:flex;align-items:center;gap:10px;padding:10px 8px;
+  border-radius:8px;cursor:pointer;border-bottom:1px solid var(--border);
+}
+.prof-item:last-child{border-bottom:none}
+.prof-item:hover{background:var(--black3)}
+.pico{width:32px;height:32px;background:var(--gold-bg);border-radius:8px;display:flex;align-items:center;justify-content:center;border:1px solid var(--gold-border);flex-shrink:0}
+.pico-inner{width:14px;height:14px;border-radius:3px;border:1.5px solid var(--gold3)}
+.pitem-info{flex:1}
+.pitem-name{font-size:12px;font-weight:600;color:var(--text)}
+.pitem-val{font-size:11px;color:var(--text2);margin-top:1px}
+.pchev{width:6px;height:6px;border-right:1.5px solid var(--text3);border-top:1.5px solid var(--text3);transform:rotate(45deg)}
+
+/* HR SCREEN */
+.hr-head{
+  padding:12px 14px 8px;border-bottom:1px solid var(--gold-border);flex-shrink:0;
+}
+.hr-title{font-size:16px;font-weight:800;color:var(--text);letter-spacing:.02em}
+.hr-sub{font-size:10px;color:var(--text3);margin-top:2px}
+
+.hr-card{
+  margin:10px 10px 0;background:var(--gold-bg);border:1px solid var(--gold-border2);
+  border-radius:12px;padding:12px;
+}
+.hr-card-title{font-size:10px;color:var(--gold2);font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+.checkin-row{display:flex;gap:8px}
+.ci-btn{
+  flex:1;padding:10px 6px;border-radius:10px;text-align:center;cursor:pointer;
+  font-size:12px;font-weight:700;letter-spacing:.03em;transition:transform .1s;
+}
+.ci-btn:active{transform:scale(.96)}
+.ci-btn.in{background:var(--gold);color:#0A0A0A}
+.ci-btn.out{background:var(--black4);color:var(--text2);border:1px solid var(--gold-border)}
+.ci-btn-sub{font-size:9px;font-weight:400;margin-top:2px;opacity:.7}
+
+.hr-stats{display:flex;gap:8px;margin:10px 10px 0}
+.hstat{flex:1;background:var(--black3);border:1px solid var(--gold-border);border-radius:10px;padding:10px;text-align:center}
+.hstat-val{font-size:18px;font-weight:800;color:var(--gold)}
+.hstat-lbl{font-size:9px;color:var(--text3);margin-top:2px;letter-spacing:.04em}
+
+.hr-actions{display:flex;gap:8px;margin:10px 10px 0;flex-wrap:wrap}
+.hact{
+  flex:1;min-width:100px;background:var(--black3);border:1px solid var(--gold-border);
+  border-radius:10px;padding:10px;cursor:pointer;transition:border-color .15s;
+}
+.hact:hover{border-color:var(--gold)}
+.hact-icon{width:28px;height:28px;background:var(--gold-bg);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:6px;border:1px solid var(--gold-border)}
+.hact-name{font-size:11px;font-weight:700;color:var(--text)}
+.hact-sub{font-size:9px;color:var(--text3);margin-top:2px}
+
+/* SAVED MSGS */
+.saved-banner{
+  background:var(--gold-bg);border-bottom:1px solid var(--gold-border);
+  padding:12px 14px;flex-shrink:0;display:flex;align-items:center;gap:10px;
+}
+.saved-icon{width:36px;height:36px;background:var(--gold);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.saved-star{color:#0A0A0A;font-size:16px;line-height:1}
+.saved-info-text{font-size:12px;font-weight:700;color:var(--text)}
+.saved-desc{font-size:10px;color:var(--text2);margin-top:1px}
+</style>
+
+<div class="wrap">
+
+<!-- TABS -->
+<div class="tabs" id="tabs">
+  <div class="tab active" onclick="show('inbox',this)">Inbox</div>
+  <div class="tab" onclick="show('chat',this)">Chat</div>
+  <div class="tab" onclick="show('voice',this)">Voice</div>
+  <div class="tab" onclick="show('hr',this)">HR</div>
+  <div class="tab" onclick="show('profile',this)">Profile</div>
+  <div class="tab" onclick="show('saved',this)">Saved</div>
+</div>
+
+<div class="screens">
+
+<!-- ==================== PHONE 1 ==================== -->
+<div class="phone-frame">
+<div class="phone">
+  <div class="sbar">
+    <span class="sbar-time">9:41</span>
+    <div class="sbar-right"><div class="sb-wifi"></div><div class="sb-el"></div><div class="sb-batt"></div></div>
+  </div>
+
+  <!-- INBOX -->
+  <div class="sv on" id="sv-inbox">
+    <div class="logo-header">
+      <div class="logo-mark">
+        <div class="logo-icon"><div class="logo-diamond"></div></div>
+        <div><div class="logo-text">NINETEEN</div><div class="logo-sub">Internal</div></div>
+      </div>
+      <div class="hdr-icons">
+        <div class="hdr-icon"><div class="hdr-dot"></div></div>
+        <div class="hdr-icon"><span class="hdr-pen">✎</span></div>
+      </div>
+    </div>
+    <div class="search"><div class="search-ico"></div><span class="search-ph">Tìm kiếm...</span></div>
+    <div class="folders">
+      <div class="fchip fa">Tất cả</div>
+      <div class="fchip">Chưa đọc</div>
+      <div class="fchip">Nhóm</div>
+      <div class="fchip">Đã lưu</div>
+      <div class="fchip">Bot</div>
+    </div>
+    <div class="ilist">
+      <div class="ci pinned" onclick="show('chat',document.querySelectorAll('.tab')[1])">
+        <div class="ava on" style="background:var(--gold)">TN</div>
+        <div class="ci-info"><div class="ci-name">Trần Ngọc</div><div class="ci-prev">Đã xong phần API login rồi</div></div>
+        <div class="ci-meta"><span class="ci-time">10:32</span><span class="ubadge">3</span></div>
+      </div>
+      <div class="ci">
+        <div class="ava" style="background:#2ECC71;font-size:9px">DEV</div>
+        <div class="ci-info"><div class="ci-name">Team Dev</div><div class="ci-prev">Minh: standup lúc 9h sáng</div></div>
+        <div class="ci-meta"><span class="ci-time">9:15</span><span class="ubadge">8</span></div>
+      </div>
+      <div class="ci">
+        <div class="ava" style="background:#E74C3C">LH</div>
+        <div class="ci-info"><div class="ci-name">Lê Hương</div><div class="ci-prev">Bạn: OK mình check lại nhé</div></div>
+        <div class="ci-meta"><span class="ci-time">Hôm qua</span></div>
+      </div>
+      <div class="ci">
+        <div class="ava" style="background:var(--gold3);font-size:9px">HR</div>
+        <div class="ci-info"><div class="ci-name">HR Bot</div><div class="ci-prev">Nhắc: Checkin hôm nay lúc 8h</div></div>
+        <div class="ci-meta"><span class="ci-time">8:00</span></div>
+      </div>
+      <div class="ci">
+        <div class="ava" style="background:#5DCAA5">PT</div>
+        <div class="ci-info"><div class="ci-name">Phạm Tuấn</div><div class="ci-prev">File thiết kế mới update rồi</div></div>
+        <div class="ci-meta"><span class="ci-time">Hôm qua</span></div>
+      </div>
+      <div class="ci">
+        <div class="ava" style="background:var(--black5);border:1px solid var(--gold-border2)"><span style="font-size:14px">★</span></div>
+        <div class="ci-info"><div class="ci-name" style="color:var(--gold2)">Tin đã lưu</div><div class="ci-prev">API auth flow snippet...</div></div>
+        <div class="ci-meta"><span class="ci-time">Thứ 3</span></div>
+      </div>
+    </div>
+    <div class="bnav">
+      <div class="bni active">
+        <svg width="18" height="14" viewBox="0 0 18 14"><rect x="0" y="0" width="18" height="2.5" rx="1.25" fill="#C9A84C"/><rect x="0" y="5.5" width="14" height="2.5" rx="1.25" fill="#C9A84C"/><rect x="0" y="11" width="10" height="2.5" rx="1.25" fill="#C9A84C"/></svg>
+        <span class="bni-lbl">Chat</span>
+      </div>
+      <div class="bni" onclick="show('hr',document.querySelectorAll('.tab')[3])">
+        <div class="bni-dot"></div>
+        <svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3.5" stroke="#5A5648" stroke-width="1.5" fill="none"/><path d="M1 14c0-3.866 3.134-7 7-7s7 3.134 7 7" stroke="#5A5648" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+        <span class="bni-lbl">HR</span>
+      </div>
+      <div class="bni">
+        <svg width="16" height="16" viewBox="0 0 16 16"><rect x="1" y="1" width="14" height="14" rx="3" stroke="#5A5648" stroke-width="1.5" fill="none"/><line x1="4" y1="5.5" x2="12" y2="5.5" stroke="#5A5648" stroke-width="1.5" stroke-linecap="round"/><line x1="4" y1="8" x2="10" y2="8" stroke="#5A5648" stroke-width="1.5" stroke-linecap="round"/><line x1="4" y1="10.5" x2="8" y2="10.5" stroke="#5A5648" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span class="bni-lbl">Tasks</span>
+      </div>
+      <div class="bni" onclick="show('profile',document.querySelectorAll('.tab')[4])">
+        <svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" stroke="#5A5648" stroke-width="1.5" fill="none"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="#5A5648" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+        <span class="bni-lbl">Profile</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAT -->
+  <div class="sv" id="sv-chat">
+    <div class="chat-hdr">
+      <div class="back" onclick="show('inbox',document.querySelectorAll('.tab')[0])"><div class="back-chev"></div></div>
+      <div class="chat-ava on" style="background:var(--gold)">TN</div>
+      <div class="chat-info"><div class="chat-name">Trần Ngọc</div><div class="chat-stat">Đang hoạt động</div></div>
+      <div class="cact">
+        <div class="cai"><svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="4.5" stroke="#C9A84C" stroke-width="1.5" fill="none"/><line x1="6" y1="4" x2="6" y2="6.5" stroke="#C9A84C" stroke-width="1.5" stroke-linecap="round"/><circle cx="6" cy="8.5" r=".8" fill="#C9A84C"/></svg></div>
+        <div class="cai"><svg width="12" height="12" viewBox="0 0 12 12"><circle cx="2.5" cy="6" r="1" fill="#C9A84C"/><circle cx="6" cy="6" r="1" fill="#C9A84C"/><circle cx="9.5" cy="6" r="1" fill="#C9A84C"/></svg></div>
+      </div>
+    </div>
+    <div class="pin-bar"><div class="pin-dot"></div>Đã ghim: "Demo ngày 20/3 — 2pm, phòng 3"</div>
+    <div class="mlist">
+      <div class="dsep">Hôm nay</div>
+      <div class="mrow r">
+        <div class="mava" style="background:var(--gold)">TN</div>
+        <div class="bwrap">
+          <div class="bbl">Mình vừa push code lên, bạn review giúp nhé 🙏</div>
+          <div class="react-row"><div class="rchip">👍<span class="rn">2</span></div><div class="rchip">🔥<span class="rn">1</span></div></div>
+          <div class="mmeta"><span class="mtime">10:28</span></div>
+        </div>
+      </div>
+      <div class="mrow s">
+        <div class="bwrap">
+          <div class="bbl"><div class="rsnip"><div class="rauth">Trần Ngọc</div>Mình vừa push code...</div>OK mình check ngay, branch nào?</div>
+          <div class="mmeta" style="justify-content:flex-end"><span class="mtime">10:30</span><div class="ticks"><div class="tk b"></div><div class="tk b" style="margin-left:-3px"></div></div></div>
+        </div>
+      </div>
+      <div class="mrow r">
+        <div class="mava" style="background:var(--gold)">TN</div>
+        <div class="bwrap">
+          <div class="bbl" style="font-family:monospace;font-size:11px;background:var(--black4);color:var(--gold2)">feature/auth-odoo-sso</div>
+          <div class="mmeta"><span class="mtime">10:31</span></div>
+        </div>
+      </div>
+      <div class="mrow s">
+        <div class="bwrap">
+          <div class="bbl">Done rồi! API login xong 🎉</div>
+          <div class="react-row" style="justify-content:flex-end"><div class="rchip">🎉<span class="rn">3</span></div></div>
+          <div class="mmeta" style="justify-content:flex-end"><span class="mtime">10:32</span><div class="ticks"><div class="tk b"></div><div class="tk b" style="margin-left:-3px"></div></div></div>
+        </div>
+      </div>
+      <div class="trow">
+        <div class="mava" style="background:var(--gold)">TN</div>
+        <div class="tbbl"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div>
+      </div>
+    </div>
+    <div class="cinput">
+      <div class="inrow">
+        <div class="abtn"><span class="aplus">+</span></div>
+        <div class="ibox"><span class="iph">Nhắn tin...</span></div>
+        <div class="emj">😊</div>
+        <div class="sbtn"><div class="sarr"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VOICE -->
+  <div class="sv" id="sv-voice">
+    <div class="chat-hdr">
+      <div class="back" onclick="show('inbox',document.querySelectorAll('.tab')[0])"><div class="back-chev"></div></div>
+      <div class="chat-ava" style="background:#E74C3C">LH</div>
+      <div class="chat-info"><div class="chat-name">Lê Hương</div><div class="chat-stat" style="color:var(--text3)">1 giờ trước</div></div>
+      <div class="cact"><div class="cai"><svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="4.5" stroke="#C9A84C" stroke-width="1.5" fill="none"/><line x1="6" y1="4" x2="6" y2="6.5" stroke="#C9A84C" stroke-width="1.5" stroke-linecap="round"/><circle cx="6" cy="8.5" r=".8" fill="#C9A84C"/></svg></div></div>
+    </div>
+    <div class="mlist">
+      <div class="dsep">Hôm nay</div>
+      <div class="mrow r">
+        <div class="mava" style="background:#E74C3C">LH</div>
+        <div class="bwrap">
+          <div class="vbbl">
+            <div class="vplay"><div class="vtri"></div></div>
+            <div class="wform" id="wf1"></div>
+            <span class="vdur">0:24</span>
+          </div>
+          <div class="mmeta"><span class="mtime">9:44</span></div>
+        </div>
+      </div>
+      <div class="mrow s">
+        <div class="bwrap">
+          <div class="bbl">Nghe rồi! Mình fix ngay 👍</div>
+          <div class="mmeta" style="justify-content:flex-end"><span class="mtime">9:50</span><div class="ticks"><div class="tk b"></div><div class="tk b" style="margin-left:-3px"></div></div></div>
+        </div>
+      </div>
+      <div class="mrow s">
+        <div class="bwrap">
+          <div class="vbbl" style="background:var(--gold);border:none">
+            <div class="vplay" style="background:rgba(0,0,0,.2)"><div class="vtri"></div></div>
+            <div class="wform" id="wf2"></div>
+            <span class="vdur" style="color:rgba(10,10,10,.7)">0:12</span>
+          </div>
+          <div class="mmeta" style="justify-content:flex-end"><span class="mtime">9:52</span></div>
+        </div>
+      </div>
+      <div class="mrow r" style="margin-top:8px">
+        <div class="mava" style="background:#E74C3C">LH</div>
+        <div class="bwrap">
+          <div class="fbbl">
+            <div class="fic"><span class="fext">PDF</span></div>
+            <div class="finfo"><div class="fname">Báo cáo Q1.pdf</div><div class="fsz">1.8 MB</div></div>
+          </div>
+          <div class="mmeta"><span class="mtime">9:55</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="cinput">
+      <div class="inrow">
+        <div class="abtn"><span class="aplus">+</span></div>
+        <div class="ibox"><span class="iph">Giữ để ghi âm...</span></div>
+        <div style="width:34px;height:34px;border-radius:50%;background:#E74C3C;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">
+          <div style="width:9px;height:9px;background:#fff;border-radius:50%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HR -->
+  <div class="sv" id="sv-hr">
+    <div class="logo-header">
+      <div class="logo-mark">
+        <div class="logo-icon"><div class="logo-diamond"></div></div>
+        <div><div class="logo-text">NINETEEN</div><div class="logo-sub">HR Module</div></div>
+      </div>
+    </div>
+    <div class="hr-card">
+      <div class="hr-card-title">Chấm công hôm nay</div>
+      <div class="checkin-row">
+        <div class="ci-btn in">
+          <div>Check In</div>
+          <div class="ci-btn-sub">Bấm để vào ca</div>
+        </div>
+        <div class="ci-btn out">
+          <div>Check Out</div>
+          <div class="ci-btn-sub">Chưa checkin</div>
+        </div>
+      </div>
+    </div>
+    <div class="hr-stats">
+      <div class="hstat"><div class="hstat-val">22</div><div class="hstat-lbl">Ngày công</div></div>
+      <div class="hstat"><div class="hstat-val">3</div><div class="hstat-lbl">Ngày phép</div></div>
+      <div class="hstat"><div class="hstat-val">8.5h</div><div class="hstat-lbl">Hôm nay</div></div>
+    </div>
+    <div class="hr-actions">
+      <div class="hact">
+        <div class="hact-icon"><svg width="14" height="14" viewBox="0 0 14 14"><rect x="1" y="3" width="12" height="10" rx="2" stroke="#C9A84C" stroke-width="1.5" fill="none"/><line x1="1" y1="6" x2="13" y2="6" stroke="#C9A84C" stroke-width="1.5"/><line x1="4" y1="1" x2="4" y2="4" stroke="#C9A84C" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="1" x2="10" y2="4" stroke="#C9A84C" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div class="hact-name">Xin nghỉ phép</div>
+        <div class="hact-sub">Còn 3 ngày</div>
+      </div>
+      <div class="hact">
+        <div class="hact-icon"><svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" stroke="#C9A84C" stroke-width="1.5" fill="none"/><line x1="7" y1="4" x2="7" y2="7.5" stroke="#C9A84C" stroke-width="1.5" stroke-linecap="round"/><line x1="7" y1="7.5" x2="9.5" y2="9" stroke="#C9A84C" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        <div class="hact-name">Tăng ca</div>
+        <div class="hact-sub">OT ×1.5</div>
+      </div>
+    </div>
+    <div style="margin:10px 10px 0;background:var(--black3);border:1px solid var(--gold-border);border-radius:10px;padding:10px">
+      <div style="font-size:10px;color:var(--gold2);font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">Lịch sử gần đây</div>
+      ${[['T2','8:02','17:35','8h 33m'],['T3','7:58','18:10','9h 12m OT'],['T4','8:15','17:30','8h 15m']].map(([d,i,o,h])=>`
+        <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)">
+          <span style="font-size:10px;font-weight:700;color:var(--text3);width:16px">${d}</span>
+          <span style="font-size:11px;color:var(--gold2)">${i}</span>
+          <span style="font-size:10px;color:var(--text3)">→</span>
+          <span style="font-size:11px;color:var(--text2)">${o}</span>
+          <span style="font-size:10px;color:${h.includes('OT')?'#E2C06A':'var(--text3)'};margin-left:auto;font-weight:${h.includes('OT')?700:400}">${h}</span>
+        </div>
+      `).join('')}
+    </div>
+    <div class="bnav" style="margin-top:auto">
+      <div class="bni"><svg width="18" height="14" viewBox="0 0 18 14"><rect x="0" y="0" width="18" height="2.5" rx="1.25" fill="#5A5648"/><rect x="0" y="5.5" width="14" height="2.5" rx="1.25" fill="#5A5648"/><rect x="0" y="11" width="10" height="2.5" rx="1.25" fill="#5A5648"/></svg><span class="bni-lbl">Chat</span></div>
+      <div class="bni active"><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3.5" stroke="#C9A84C" stroke-width="1.5" fill="none"/><path d="M1 14c0-3.866 3.134-7 7-7s7 3.134 7 7" stroke="#C9A84C" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg><span class="bni-lbl">HR</span></div>
+      <div class="bni"><svg width="16" height="16" viewBox="0 0 16 16"><rect x="1" y="1" width="14" height="14" rx="3" stroke="#5A5648" stroke-width="1.5" fill="none"/><line x1="4" y1="5.5" x2="12" y2="5.5" stroke="#5A5648" stroke-width="1.5" stroke-linecap="round"/><line x1="4" y1="8" x2="10" y2="8" stroke="#5A5648" stroke-width="1.5" stroke-linecap="round"/><line x1="4" y1="10.5" x2="8" y2="10.5" stroke="#5A5648" stroke-width="1.5" stroke-linecap="round"/></svg><span class="bni-lbl">Tasks</span></div>
+      <div class="bni"><svg width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3" stroke="#5A5648" stroke-width="1.5" fill="none"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="#5A5648" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg><span class="bni-lbl">Profile</span></div>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="sv" id="sv-profile">
+    <div class="sbar" style="padding-top:4px">
+      <span class="sbar-time" style="font-size:11px;color:var(--text3)">← Back</span>
+    </div>
+    <div class="prof-head">
+      <div class="prof-ava-big">NT</div>
+      <div class="prof-name">Nguyễn Thành</div>
+      <div class="prof-role">Senior Developer</div>
+      <div class="prof-stats">
+        <div class="pstat"><div class="pstat-val">22</div><div class="pstat-lbl">Ngày công</div></div>
+        <div class="pstat-div"></div>
+        <div class="pstat"><div class="pstat-val">47</div><div class="pstat-lbl">Tasks done</div></div>
+        <div class="pstat-div"></div>
+        <div class="pstat"><div class="pstat-val">128h</div><div class="pstat-lbl">Tháng này</div></div>
+      </div>
+    </div>
+    <div class="prof-list">
+      ${[
+        ['Thông tin cá nhân','nguyenthanh@19t.vn'],
+        ['Kỳ lương','01/03 — 31/03/2025'],
+        ['Số ngày phép còn lại','3 / 12 ngày'],
+        ['OT tháng này','12.5 giờ (×1.5)'],
+        ['Cài đặt thông báo','Chat, HR, Tasks'],
+        ['AI Settings','GPT-4o · api.openai.com'],
+        ['Đăng xuất','Odoo SSO'],
+      ].map(([n,v])=>`
+        <div class="prof-item">
+          <div class="pico"><div class="pico-inner"></div></div>
+          <div class="pitem-info"><div class="pitem-name">${n}</div><div class="pitem-val">${v}</div></div>
+          <div class="pchev"></div>
+        </div>
+      `).join('')}
+    </div>
+  </div>
+
+  <!-- SAVED -->
+  <div class="sv" id="sv-saved">
+    <div class="chat-hdr">
+      <div class="back" onclick="show('inbox',document.querySelectorAll('.tab')[0])"><div class="back-chev"></div></div>
+      <div class="chat-ava" style="background:var(--black4);border:1px solid var(--gold-border2)"><span style="font-size:14px;color:var(--gold)">★</span></div>
+      <div class="chat-info"><div class="chat-name" style="color:var(--gold2)">Tin nhắn đã lưu</div><div class="chat-stat" style="color:var(--text3)">Chỉ mình bạn</div></div>
+    </div>
+    <div class="saved-banner">
+      <div class="saved-icon"><span class="saved-star">★</span></div>
+      <div><div class="saved-info-text">Ghi chú cá nhân</div><div class="saved-desc">Lưu snippet, link, ghi nhớ</div></div>
+    </div>
+    <div class="mlist">
+      <div class="dsep">Thứ 3</div>
+      <div class="mrow s">
+        <div class="bwrap">
+          <div class="bbl" style="font-family:monospace;font-size:10px;background:var(--black4);color:var(--gold2);border:1px solid var(--gold-border)">POST /auth/login<br>{email, password}<br>→ Odoo session_id<br>→ issue JWT</div>
+          <div class="mmeta" style="justify-content:flex-end"><span class="mtime">14:22</span></div>
+        </div>
+      </div>
+      <div class="mrow s">
+        <div class="bwrap">
+          <div class="bbl">Demo flow Odoo SSO — nhớ test với account service trước khi deploy</div>
+          <div class="mmeta" style="justify-content:flex-end"><span class="mtime">14:25</span></div>
+        </div>
+      </div>
+      <div class="dsep">Hôm nay</div>
+      <div class="mrow s">
+        <div class="bwrap">
+          <div class="fbbl">
+            <div class="fic"><span class="fext">MD</span></div>
+            <div class="finfo"><div class="fname">architecture-notes.md</div><div class="fsz">4.2 KB</div></div>
+          </div>
+          <div class="mmeta" style="justify-content:flex-end"><span class="mtime">9:10</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="cinput">
+      <div class="inrow">
+        <div class="abtn"><span class="aplus">+</span></div>
+        <div class="ibox"><span class="iph">Ghi chú...</span></div>
+        <div class="sbtn"><div class="sarr"></div></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /phone -->
+</div><!-- /phone-frame -->
+
+</div><!-- /screens -->
+</div><!-- /wrap -->
+
+<script>
+const waveData=[3,5,8,6,4,9,5,7,4,6,8,5,7,3,5,9,6,4,7,5,8,4,6];
+['wf1','wf2'].forEach(id=>{
+  const w=document.getElementById(id);
+  if(!w)return;
+  waveData.forEach((h,i)=>{
+    const b=document.createElement('div');
+    b.className='wb';
+    b.style.height=(h*2)+'px';
+    if(id==='wf1'&&i<10)b.style.background='var(--gold2)';
+    w.appendChild(b);
+  });
+});
+
+function show(id, tabEl){
+  document.querySelectorAll('.sv').forEach(v=>v.classList.remove('on'));
+  const el=document.getElementById('sv-'+id);
+  if(el)el.classList.add('on');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  if(tabEl)tabEl.classList.add('active');
+}
+</script>

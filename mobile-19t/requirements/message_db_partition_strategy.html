@@ -1,0 +1,517 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --k:#0A0A0A;--k2:#111116;--k3:#18181F;--k4:#1F1F28;--k5:#272732;
+  --g:#C9A84C;--g2:#E2C06A;--g3:#A8843A;
+  --gb:rgba(201,168,76,.10);--gbd:rgba(201,168,76,.22);--gbd2:rgba(201,168,76,.38);
+  --tx:#F2EDD8;--tx2:#9E9880;--tx3:#5A5648;
+  --gr:#2ECC71;--rd:#E74C3C;--bl:#3B8BDB;--am:#E2A030;--tl:#1D9E75;
+  --pu:#7F77DD;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',sans-serif;background:transparent;color:var(--tx)}
+.root{padding:12px 0;display:flex;flex-direction:column;gap:20px}
+.tabs{display:flex;gap:0;background:var(--k3);border-radius:11px;padding:3px;border:1px solid var(--gbd)}
+.tab{flex:1;padding:7px 8px;border-radius:8px;font-size:11px;font-weight:700;text-align:center;cursor:pointer;color:var(--tx2);transition:all .15s;letter-spacing:.02em;user-select:none}
+.tab.on{background:var(--g);color:var(--k)}
+.pv{display:none;flex-direction:column;gap:14px}
+.pv.on{display:flex}
+.card{background:var(--k2);border:1px solid var(--gbd);border-radius:13px;padding:16px}
+.card-title{font-size:12px;font-weight:700;color:var(--g2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px}
+.code{font-family:'SF Mono',monospace;font-size:11px;background:var(--k4);border:1px solid var(--k5);border-radius:8px;padding:12px;color:var(--g2);line-height:1.7;overflow-x:auto}
+.code .cm{color:var(--tx3)}
+.code .kw{color:#C792EA}
+.code .fn{color:var(--g2)}
+.code .st{color:var(--gr)}
+.code .nm{color:#82AAFF}
+.code .op{color:var(--tx2)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.stat{background:var(--k3);border:1px solid var(--gbd);border-radius:10px;padding:12px;text-align:center}
+.stat-val{font-size:22px;font-weight:800;color:var(--g)}
+.stat-lbl{font-size:10px;color:var(--tx3);margin-top:3px;letter-spacing:.04em}
+.stat-sub{font-size:10px;color:var(--tx2);margin-top:2px}
+.idx{background:var(--k3);border:1px solid var(--gbd);border-radius:10px;padding:12px}
+.idx-title{font-size:11px;font-weight:700;color:var(--tx);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.idx-dot{width:7px;height:7px;border-radius:50%}
+.idx-desc{font-size:11px;color:var(--tx2);line-height:1.5}
+.idx-query{font-family:monospace;font-size:10px;color:var(--g2);background:var(--k4);border-radius:5px;padding:5px 8px;margin-top:6px}
+.step{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--k4)}
+.step:last-child{border-bottom:none}
+.step-n{width:22px;height:22px;border-radius:7px;background:var(--gb);border:1px solid var(--gbd2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--g);flex-shrink:0}
+.step-body{flex:1}
+.step-title{font-size:12px;font-weight:700;color:var(--tx)}
+.step-sub{font-size:11px;color:var(--tx2);margin-top:2px;line-height:1.5}
+.tag{display:inline-block;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:5px}
+.tg{background:rgba(46,204,113,.1);color:var(--gr);border:1px solid rgba(46,204,113,.2)}
+.ty{background:rgba(226,160,48,.1);color:var(--am);border:1px solid rgba(226,160,48,.2)}
+.tb{background:rgba(59,139,219,.1);color:var(--bl);border:1px solid rgba(59,139,219,.18)}
+.tp{background:rgba(127,119,221,.1);color:var(--pu);border:1px solid rgba(127,119,221,.2)}
+.tr{background:rgba(231,76,60,.1);color:var(--rd);border:1px solid rgba(231,76,60,.18)}
+.warn{background:rgba(226,160,48,.08);border:1px solid rgba(226,160,48,.2);border-radius:9px;padding:10px 12px;display:flex;gap:8px;align-items:flex-start}
+.warn-icon{width:18px;height:18px;background:rgba(226,160,48,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:800;color:var(--am);margin-top:1px}
+.warn-text{font-size:11px;color:var(--am);line-height:1.5}
+.perf{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--k3);border-radius:8px;margin-top:6px}
+.perf-bar-bg{flex:1;height:4px;background:var(--k5);border-radius:2px}
+.perf-bar{height:4px;border-radius:2px}
+.perf-lbl{font-size:10px;color:var(--tx2);width:60px;flex-shrink:0;text-align:right}
+.perf-name{font-size:10px;color:var(--tx3);width:80px;flex-shrink:0}
+</style>
+
+<div class="root">
+<div class="tabs">
+  <div class="tab on"  onclick="sw(0,this)">DB Schema</div>
+  <div class="tab"     onclick="sw(1,this)">Load tin cũ</div>
+  <div class="tab"     onclick="sw(2,this)">Full-text search</div>
+  <div class="tab"     onclick="sw(3,this)">Flutter side</div>
+</div>
+
+<!-- ═══ TAB 0: DB Schema ═══ -->
+<div class="pv on" id="pv0">
+  <div class="card">
+    <div class="card-title">Partition strategy — 30M+ messages</div>
+    <div class="code"><span class="cm">-- Bảng chính: partition by RANGE trên created_at</span>
+<span class="kw">CREATE TABLE</span> <span class="fn">messages</span> (
+  id          <span class="nm">uuid</span>        <span class="kw">DEFAULT</span> gen_random_uuid(),
+  conv_id     <span class="nm">uuid</span>        <span class="kw">NOT NULL</span>,
+  sender_id   <span class="nm">uuid</span>        <span class="kw">NOT NULL</span>,
+  type        <span class="nm">text</span>        <span class="kw">NOT NULL DEFAULT</span> <span class="st">'text'</span>,
+  content     <span class="nm">text</span>,
+  reply_to_id <span class="nm">uuid</span>,
+  created_at  <span class="nm">timestamptz</span> <span class="kw">NOT NULL DEFAULT</span> now(),
+  deleted_at  <span class="nm">timestamptz</span>,
+  <span class="kw">PRIMARY KEY</span> (id, created_at)
+) <span class="kw">PARTITION BY RANGE</span> (created_at);
+
+<span class="cm">-- Tạo partition mỗi quý (3 tháng)</span>
+<span class="cm">-- Q1 2025: messages từ Jan–Mar 2025</span>
+<span class="kw">CREATE TABLE</span> messages_2025_q1
+  <span class="kw">PARTITION OF</span> messages
+  <span class="kw">FOR VALUES FROM</span> (<span class="st">'2025-01-01'</span>) <span class="kw">TO</span> (<span class="st">'2025-04-01'</span>);
+
+<span class="kw">CREATE TABLE</span> messages_2025_q2
+  <span class="kw">PARTITION OF</span> messages
+  <span class="kw">FOR VALUES FROM</span> (<span class="st">'2025-04-01'</span>) <span class="kw">TO</span> (<span class="st">'2025-07-01'</span>);
+<span class="cm">-- ... tạo partition trước cho Q3, Q4, 2026...</span></div>
+  </div>
+
+  <div class="row2">
+    <div class="card">
+      <div class="card-title">Index quan trọng</div>
+      <div class="idx">
+        <div class="idx-title"><div class="idx-dot" style="background:var(--g)"></div>Index 1 — Timeline scroll</div>
+        <div class="idx-desc">Query chính khi user scroll lên: lấy N messages cũ hơn cursor theo conv_id.</div>
+        <div class="idx-query">CREATE INDEX idx_msg_conv_time<br>ON messages (conv_id, created_at DESC)<br>WHERE deleted_at IS NULL;</div>
+      </div>
+      <div class="idx" style="margin-top:8px">
+        <div class="idx-title"><div class="idx-dot" style="background:var(--bl)"></div>Index 2 — Jump to date</div>
+        <div class="idx-desc">User click vào ngày trong calendar → jump tới vị trí đó.</div>
+        <div class="idx-query">CREATE INDEX idx_msg_conv_date<br>ON messages (conv_id, date_trunc('day', created_at));</div>
+      </div>
+      <div class="idx" style="margin-top:8px">
+        <div class="idx-title"><div class="idx-dot" style="background:var(--tl)"></div>Index 3 — Reply lookup</div>
+        <div class="idx-query">CREATE INDEX idx_msg_reply<br>ON messages (reply_to_id)<br>WHERE reply_to_id IS NOT NULL;</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Ước tính dung lượng</div>
+      <div class="row3" style="grid-template-columns:1fr 1fr;gap:8px">
+        <div class="stat"><div class="stat-val">30M</div><div class="stat-lbl">Messages</div><div class="stat-sub">~500 bytes/msg avg</div></div>
+        <div class="stat"><div class="stat-val">~15GB</div><div class="stat-lbl">Raw data</div><div class="stat-sub">Không kể attachment</div></div>
+        <div class="stat"><div class="stat-val">~4GB</div><div class="stat-lbl">Indexes</div><div class="stat-sub">Timeline + search</div></div>
+        <div class="stat"><div class="stat-val">&lt;5ms</div><div class="stat-lbl">Query time</div><div class="stat-sub">Với index đúng</div></div>
+      </div>
+      <div class="warn" style="margin-top:10px">
+        <div class="warn-icon">!</div>
+        <div class="warn-text">Với < 50 người, 30M messages là nhiều năm sau. Nhưng thiết kế partition ngay từ đầu — migrate sau rất khó.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Tại sao partition by time — không phải by conv_id?</div>
+    <div class="step">
+      <div class="step-n">1</div>
+      <div class="step-body">
+        <div class="step-title">Hot data vs cold data rõ ràng<span class="tag tg">Perf</span></div>
+        <div class="step-sub">Messages tháng này được query liên tục (hot). Messages 2 năm trước gần như không bao giờ load (cold). Partition by time → PostgreSQL chỉ scan partition hiện tại, bỏ qua hoàn toàn các partition cũ.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">2</div>
+      <div class="step-body">
+        <div class="step-title">Archive tự động<span class="tag tb">Ops</span></div>
+        <div class="step-sub">Partition 2023 không ai đọc nữa → move sang cold storage (S3/object store). Không cần DELETE, chỉ DETACH PARTITION và archive. Zero downtime.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">3</div>
+      <div class="step-body">
+        <div class="step-title">Không partition by conv_id vì gì?<span class="tag ty">Warning</span></div>
+        <div class="step-sub">Một số conversation rất lớn (group nhóm, channel all-hands) có thể có hàng triệu messages trong 1 partition → uneven distribution. Time-based luôn đều hơn.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TAB 1: Load old messages ═══ -->
+<div class="pv" id="pv1">
+  <div class="card">
+    <div class="card-title">Cursor-based pagination — không dùng OFFSET</div>
+    <div class="warn" style="margin-bottom:12px">
+      <div class="warn-icon">!</div>
+      <div class="warn-text">OFFSET là anti-pattern cho chat. <code>OFFSET 10000</code> vẫn scan 10000 rows trước khi skip → chậm dần theo thời gian. Dùng cursor (last message ID + timestamp) thay thế.</div>
+    </div>
+    <div class="code"><span class="cm">-- Load 30 messages CŨ HƠN cursor (scroll lên)</span>
+<span class="kw">SELECT</span> id, conv_id, sender_id, type, content,
+       created_at, reply_to_id
+<span class="kw">FROM</span>   messages
+<span class="kw">WHERE</span>  conv_id    = <span class="nm">$1</span>                        <span class="cm">-- conversation</span>
+  <span class="kw">AND</span>  created_at <span class="op">&lt;</span> <span class="nm">$2</span>                        <span class="cm">-- cursor timestamp</span>
+  <span class="kw">AND</span>  deleted_at <span class="kw">IS NULL</span>
+<span class="kw">ORDER BY</span> created_at <span class="kw">DESC</span>
+<span class="kw">LIMIT</span>  <span class="nm">30</span>;
+
+<span class="cm">-- Response trả về cursor cho lần load tiếp theo:</span>
+<span class="cm">-- { messages: [...], nextCursor: messages[29].created_at }</span></div>
+    <div style="margin-top:10px">
+      <div style="font-size:11px;font-weight:700;color:var(--tx2);margin-bottom:6px">Query plan (EXPLAIN ANALYZE):</div>
+      <div class="perf">
+        <span class="perf-name">Index scan</span>
+        <div class="perf-bar-bg"><div class="perf-bar" style="width:8%;background:var(--gr)"></div></div>
+        <span class="perf-lbl" style="color:var(--gr)">~2ms</span>
+      </div>
+      <div class="perf">
+        <span class="perf-name">OFFSET 10000</span>
+        <div class="perf-bar-bg"><div class="perf-bar" style="width:65%;background:var(--rd)"></div></div>
+        <span class="perf-lbl" style="color:var(--rd)">~180ms</span>
+      </div>
+      <div class="perf">
+        <span class="perf-name">OFFSET 100000</span>
+        <div class="perf-bar-bg"><div class="perf-bar" style="width:95%;background:var(--rd)"></div></div>
+        <span class="perf-lbl" style="color:var(--rd)">~2000ms</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="row2">
+    <div class="card">
+      <div class="card-title">Jump to specific date</div>
+      <div class="step">
+        <div class="step-n">1</div>
+        <div class="step-body">
+          <div class="step-title">User chọn ngày từ calendar</div>
+          <div class="step-sub">Tìm message gần nhất với ngày đó làm điểm neo.</div>
+          <div class="idx-query" style="margin-top:6px">SELECT id, created_at FROM messages<br>WHERE conv_id = $1<br>  AND created_at >= $date_start<br>ORDER BY created_at ASC LIMIT 1;</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <div class="step-body">
+          <div class="step-title">Load context window xung quanh</div>
+          <div class="step-sub">Lấy 15 messages trước + 15 messages sau điểm neo → user thấy ngữ cảnh đầy đủ.</div>
+          <div class="idx-query" style="margin-top:6px">-- 15 trước anchor<br>SELECT * FROM messages WHERE conv_id=$1<br>  AND created_at < $anchor ORDER BY created_at DESC LIMIT 15;<br>-- 15 sau anchor<br>SELECT * FROM messages WHERE conv_id=$1<br>  AND created_at >= $anchor ORDER BY created_at ASC LIMIT 15;</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Jump to replied message</div>
+      <div class="step">
+        <div class="step-n">1</div>
+        <div class="step-body">
+          <div class="step-title">Tap vào reply snippet</div>
+          <div class="step-sub">Fetch message gốc theo ID → biết created_at của nó.</div>
+          <div class="idx-query" style="margin-top:6px">SELECT id, created_at, content<br>FROM messages WHERE id = $reply_to_id;</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <div class="step-body">
+          <div class="step-title">Scroll animation + highlight</div>
+          <div class="step-sub">Flutter dùng created_at làm cursor → load context window → scroll tới đúng item → highlight bubble 2 giây.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <div class="step-body">
+          <div class="step-title">Cache trong Drift local</div>
+          <div class="step-sub">Nếu message đã có trong local SQLite → không cần API call, jump instant.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">NestJS API endpoint thiết kế</div>
+    <div class="code"><span class="cm">// GET /conversations/:id/messages</span>
+<span class="cm">// Query params: cursor (timestamp ISO), limit (default 30), direction (before|after)</span>
+
+<span class="nm">@Get</span>(<span class="st">':id/messages'</span>)
+<span class="kw">async</span> <span class="fn">getMessages</span>(
+  <span class="nm">@Param</span>(<span class="st">'id'</span>) convId: string,
+  <span class="nm">@Query</span>(<span class="st">'cursor'</span>) cursor?: string,   <span class="cm">// ISO timestamp</span>
+  <span class="nm">@Query</span>(<span class="st">'limit'</span>)  limit  = <span class="nm">30</span>,
+  <span class="nm">@Query</span>(<span class="st">'dir'</span>)    dir    = <span class="st">'before'</span>,   <span class="cm">// before | after</span>
+) {
+  <span class="kw">const</span> rows = <span class="kw">await</span> <span class="kw">this</span>.msgRepo.getPage({
+    convId, cursor: cursor ? <span class="kw">new</span> Date(cursor) : <span class="kw">new</span> Date(),
+    limit, direction: dir,
+  });
+  <span class="kw">return</span> {
+    messages:   rows,
+    nextCursor: rows.at(-<span class="nm">1</span>)?.createdAt?.toISOString(),
+    hasMore:    rows.length === limit,
+  };
+}</div>
+  </div>
+</div>
+
+<!-- ═══ TAB 2: Full-text search ═══ -->
+<div class="pv" id="pv2">
+  <div class="card">
+    <div class="card-title">2 tầng search — local cache + server</div>
+    <div class="step">
+      <div class="step-n">1</div>
+      <div class="step-body">
+        <div class="step-title">Tầng 1: Drift local SQLite (< 300ms)<span class="tag tg">Fast</span></div>
+        <div class="step-sub">Flutter search trong messages đã cache local (7 ngày gần nhất). Kết quả tức thì, không cần network. Dùng SQLite FTS5 extension.</div>
+        <div class="idx-query" style="margin-top:6px">-- Drift local FTS5<br>SELECT m.* FROM messages_fts<br>JOIN messages m ON m.id = messages_fts.id<br>WHERE messages_fts MATCH 'query*'<br>ORDER BY rank LIMIT 20;</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">2</div>
+      <div class="step-body">
+        <div class="step-title">Tầng 2: PostgreSQL full-text (server)<span class="tag tb">Complete</span></div>
+        <div class="step-sub">Nếu user muốn search toàn bộ lịch sử → gọi API. PostgreSQL FTS với tsvector column + GIN index. Hỗ trợ tiếng Việt qua unaccent extension.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">3</div>
+      <div class="step-body">
+        <div class="step-title">Tầng 3: Elasticsearch (scale lớn)<span class="tag tp">Optional</span></div>
+        <div class="step-sub">Khi số lượng lớn hơn vài chục triệu và cần search phức tạp (fuzzy, multilang, snippet highlight). Overkill cho < 50 người — implement khi thực sự cần.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">PostgreSQL FTS — setup tiếng Việt</div>
+    <div class="code"><span class="cm">-- Bước 1: Enable extensions</span>
+<span class="kw">CREATE EXTENSION IF NOT EXISTS</span> unaccent;
+<span class="kw">CREATE EXTENSION IF NOT EXISTS</span> pg_trgm;  <span class="cm">-- trigram similarity</span>
+
+<span class="cm">-- Bước 2: Thêm cột tsvector (được tự cập nhật)</span>
+<span class="kw">ALTER TABLE</span> messages
+  <span class="kw">ADD COLUMN</span> search_vector tsvector
+  <span class="kw">GENERATED ALWAYS AS</span> (
+    to_tsvector(<span class="st">'simple'</span>,
+      unaccent(coalesce(content, <span class="st">''</span>))
+    )
+  ) <span class="kw">STORED</span>;
+
+<span class="cm">-- Bước 3: GIN index trên tsvector</span>
+<span class="kw">CREATE INDEX</span> idx_msg_fts
+  <span class="kw">ON</span> messages <span class="kw">USING</span> GIN (search_vector);
+
+<span class="cm">-- Bước 4: Trigram index cho partial match "api lo"</span>
+<span class="kw">CREATE INDEX</span> idx_msg_trgm
+  <span class="kw">ON</span> messages <span class="kw">USING</span> GIN (unaccent(content) gin_trgm_ops)
+  <span class="kw">WHERE</span> deleted_at <span class="kw">IS NULL</span>;</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Search query — 3 loại chính</div>
+    <div class="code"><span class="cm">-- 1. FULL-TEXT: "deploy production"</span>
+<span class="kw">SELECT</span> m.*, conv.name AS conv_name,
+  ts_headline(<span class="st">'simple'</span>, unaccent(m.content),
+    plainto_tsquery(<span class="st">'simple'</span>, unaccent(<span class="nm">$query</span>)),
+    <span class="st">'MaxWords=15, MinWords=5'</span>  <span class="cm">-- snippet highlight</span>
+  ) AS headline
+<span class="kw">FROM</span> messages m
+<span class="kw">JOIN</span> conversations conv <span class="kw">ON</span> conv.id = m.conv_id
+<span class="kw">JOIN</span> conversation_members cm <span class="kw">ON</span> cm.conv_id = m.conv_id
+  <span class="kw">AND</span> cm.user_id = <span class="nm">$userId</span>         <span class="cm">-- chỉ search conv mình có</span>
+<span class="kw">WHERE</span> m.search_vector @@ plainto_tsquery(<span class="st">'simple'</span>, unaccent(<span class="nm">$query</span>))
+  <span class="kw">AND</span> m.deleted_at <span class="kw">IS NULL</span>
+<span class="kw">ORDER BY</span> ts_rank(m.search_vector,
+           plainto_tsquery(<span class="st">'simple'</span>, unaccent(<span class="nm">$query</span>))) <span class="kw">DESC</span>,
+         m.created_at <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> 20;
+
+<span class="cm">-- 2. PARTIAL MATCH: "api lo" → khớp "api login"</span>
+<span class="kw">WHERE</span> unaccent(content) <span class="op">ILIKE</span> unaccent(<span class="nm">$1</span>)  <span class="cm">-- $1 = '%api lo%'</span>
+  <span class="cm">-- trigram index tự kick in, không phải seq scan</span>
+
+<span class="cm">-- 3. SCOPED: search trong 1 conversation</span>
+<span class="kw">WHERE</span> m.conv_id = <span class="nm">$convId</span>
+  <span class="kw">AND</span> m.search_vector @@ plainto_tsquery(...)
+  <span class="cm">-- Nhanh hơn nhiều vì partition pruning</span></div>
+  </div>
+
+  <div class="row2">
+    <div class="card">
+      <div class="card-title">Search performance</div>
+      <div class="perf">
+        <span class="perf-name" style="width:120px">FTS trong 1 conv</span>
+        <div class="perf-bar-bg"><div class="perf-bar" style="width:5%;background:var(--gr)"></div></div>
+        <span class="perf-lbl" style="color:var(--gr)">~5ms</span>
+      </div>
+      <div class="perf">
+        <span class="perf-name" style="width:120px">FTS toàn bộ</span>
+        <div class="perf-bar-bg"><div class="perf-bar" style="width:25%;background:var(--g)"></div></div>
+        <span class="perf-lbl" style="color:var(--g)">~50ms</span>
+      </div>
+      <div class="perf">
+        <span class="perf-name" style="width:120px">Trigram ILIKE</span>
+        <div class="perf-bar-bg"><div class="perf-bar" style="width:35%;background:var(--am)"></div></div>
+        <span class="perf-lbl" style="color:var(--am)">~80ms</span>
+      </div>
+      <div class="perf">
+        <span class="perf-name" style="width:120px">No index LIKE</span>
+        <div class="perf-bar-bg"><div class="perf-bar" style="width:95%;background:var(--rd)"></div></div>
+        <span class="perf-lbl" style="color:var(--rd)">~3000ms</span>
+      </div>
+      <div style="font-size:10px;color:var(--tx3);margin-top:8px">* Ước tính tại 30M messages, server 4 core</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Search result shape</div>
+      <div class="code" style="font-size:10px">{
+  <span class="st">"results"</span>: [{
+    <span class="st">"id"</span>: <span class="st">"uuid"</span>,
+    <span class="st">"content"</span>: <span class="st">"full text"</span>,
+    <span class="st">"headline"</span>: <span class="st">"...API &lt;b&gt;login&lt;/b&gt; xong..."</span>,
+    <span class="st">"conv_id"</span>: <span class="st">"uuid"</span>,
+    <span class="st">"conv_name"</span>: <span class="st">"Trần Ngọc"</span>,
+    <span class="st">"sender_name"</span>: <span class="st">"Nguyễn Thành"</span>,
+    <span class="st">"created_at"</span>: <span class="st">"2025-03-14T10:31:00Z"</span>,
+    <span class="st">"jump_cursor"</span>: <span class="st">"2025-03-14T10:31:00Z"</span>
+  }],
+  <span class="st">"total"</span>: <span class="nm">47</span>,
+  <span class="st">"query_ms"</span>: <span class="nm">48</span>
+}</div>
+      <div style="font-size:11px;color:var(--tx2);margin-top:8px"><code>jump_cursor</code> → user tap vào kết quả → app load context window tại vị trí đó trong conversation.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TAB 3: Flutter side ═══ -->
+<div class="pv" id="pv3">
+  <div class="card">
+    <div class="card-title">Flutter architecture — infinite scroll + virtual list</div>
+    <div class="code"><span class="cm">// Riverpod provider — messages stream per conversation</span>
+<span class="nm">@riverpod</span>
+<span class="kw">class</span> <span class="fn">MessageListNotifier</span> <span class="kw">extends</span> _$MessageListNotifier {
+  <span class="kw">static const</span> pageSize = <span class="nm">30</span>;
+  <span class="kw">String</span>? _nextCursor;
+  <span class="kw">bool</span>  _hasMore = <span class="kw">true</span>;
+
+  <span class="nm">@override</span>
+  <span class="kw">Future</span>&lt;List&lt;Message&gt;&gt; build(String convId) <span class="kw">async</span> {
+    <span class="kw">final</span> cached = <span class="kw">await</span> localDb.getMessages(convId, limit: pageSize);
+    <span class="kw">if</span> (cached.isNotEmpty) <span class="kw">return</span> cached; <span class="cm">// instant từ Drift</span>
+    <span class="kw">return</span> _fetchFromApi(convId);
+  }
+
+  <span class="kw">Future</span>&lt;<span class="kw">void</span>&gt; loadMore() <span class="kw">async</span> {
+    <span class="kw">if</span> (!_hasMore) <span class="kw">return</span>;
+    <span class="kw">final</span> result = <span class="kw">await</span> api.getMessages(
+      convId: convId,
+      cursor: _nextCursor,     <span class="cm">// timestamp cursor</span>
+      limit: pageSize,
+    );
+    _nextCursor = result.nextCursor;
+    _hasMore    = result.hasMore;
+    state = AsyncData([...state.value!, ...result.messages]);
+    <span class="kw">await</span> localDb.insertMessages(result.messages); <span class="cm">// cache Drift</span>
+  }
+}</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">ListView tối ưu — key pattern</div>
+    <div class="code"><span class="cm">// Chat list render ngược (mới nhất ở dưới)</span>
+ListView.builder(
+  reverse: <span class="kw">true</span>,               <span class="cm">// scroll starts at bottom</span>
+  itemCount: messages.length + <span class="nm">1</span>,
+  itemBuilder: (ctx, i) {
+    <span class="kw">if</span> (i == messages.length) {
+      <span class="kw">return</span> _LoadMoreTrigger(  <span class="cm">// sentinel ở đầu list</span>
+        onVisible: () => notifier.loadMore(),
+      );
+    }
+    <span class="kw">return</span> RepaintBoundary(   <span class="cm">// mỗi bubble là repaint boundary riêng</span>
+      key: ValueKey(messages[i].id),
+      child: MessageBubble(message: messages[i]),
+    );
+  },
+)
+
+<span class="cm">// LoadMoreTrigger dùng VisibilityDetector</span>
+<span class="cm">// Khi sentinel widget scroll vào viewport → trigger loadMore()</span>
+<span class="cm">// Không cần scroll listener → không lag</span></div>
+  </div>
+
+  <div class="row2">
+    <div class="card">
+      <div class="card-title">Local cache strategy (Drift)</div>
+      <div class="step">
+        <div class="step-n">1</div>
+        <div class="step-body">
+          <div class="step-title">Giữ 7 ngày gần nhất<span class="tag tg">Default</span></div>
+          <div class="step-sub">Cache 7 ngày mỗi conversation. Đủ cho 99% use case, không ngốn storage điện thoại.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <div class="step-body">
+          <div class="step-title">Eviction strategy<span class="tag tb">LRU</span></div>
+          <div class="step-sub">Conversation không xem > 30 ngày → xóa cache local. Mở lại → fetch lại từ server.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <div class="step-body">
+          <div class="step-title">Search local<span class="tag tp">FTS5</span></div>
+          <div class="step-sub">Drift + SQLite FTS5 virtual table → search instant trong cached messages, không cần network.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">UX patterns quan trọng</div>
+      <div class="step">
+        <div class="step-n">1</div>
+        <div class="step-body">
+          <div class="step-title">Skeleton loading<span class="tag tg">UX</span></div>
+          <div class="step-sub">Khi load page cũ hơn → hiện shimmer placeholder ở top, không block scroll. Telegram làm điều này.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <div class="step-body">
+          <div class="step-title">Scroll position restore<span class="tag tb">UX</span></div>
+          <div class="step-sub">Khi quay lại conversation → khôi phục đúng scroll position cuối cùng. Lưu vào local DB.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <div class="step-body">
+          <div class="step-title">"Jump to present" button<span class="tag ty">UX</span></div>
+          <div class="step-sub">User đang scroll xem tin cũ → có unread messages mới → hiện nút "↓ 5 tin mới" → tap → scroll xuống present.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+function sw(idx, el) {
+  for (var i = 0; i < 4; i++) {
+    var p = document.getElementById('pv' + i);
+    if (p) p.style.display = (i === idx) ? 'flex' : 'none';
+  }
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('on'); });
+  if (el) el.classList.add('on');
+}
+</script>
