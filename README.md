@@ -7,7 +7,7 @@
 
 # AppChat – Nineteen Tech Internal App
 
-  Ứng dụng nội bộ dành cho Nineteen Tech, hỗ trợ giao tiếp doanh nghiệp, quản lý nhân sự, chấm công, công việc và thông báo thời gian thực.
+  hỗ trợ giao tiếp doanh nghiệp, quản lý nhân sự, chấm công, công việc và thông báo thời gian thực.
 
   ## Giới thiệu
 
